@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NIMMR Form — National Internal Medicine Mortality Review</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563a8">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<script>
+  // Register the Service Worker for Offline Capabilities
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(registration => console.log('Service Worker registered', registration.scope))
+        .catch(err => console.log('Service Worker registration failed', err));
+    });
+  }
+</script>
 <style>
 :root{--bg:#1a1c1e;--surface:#22252a;--surface2:#2b2f36;--border:#3a3f48;--text:#e8eaf0;--text-muted:#8a92a3;--text-dim:#5a6070;--accent:#2563a8;--accent-light:#3b7fd4;--accent-glow:rgba(37,99,168,0.15);--gold:#c9a84c;--gold-light:#e8c96a;--danger:#c0392b;--danger-light:#e74c3c;--success:#27ae60;--warning:#e67e22;--locked:#2d1f1f;--font-base:17px;}
 [data-theme="light"]{--bg:#edeae2;--surface:#f5f2eb;--surface2:#fffdf8;--border:#c8c3b8;--text:#1a1c1e;--text-muted:#5a5750;--text-dim:#888078;--accent-glow:rgba(37,99,168,0.08);}
