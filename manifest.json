@@ -2,7 +2,7 @@
   "name": "National Internal Medicine Mortality Review",
   "short_name": "NIMMR",
   "description": "Ministry of Health Malaysia NIMMR Confidential Form",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#1a1c1e",
   "theme_color": "#2563a8",
