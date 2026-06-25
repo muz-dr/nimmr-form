@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c" y2="100%">
+      <stop offset="0" stop-color="#0a192f" />
+      <stop offset="1" stop-color="#0f3156" />
+    </linearGradient>
+    <linearGradient id="b" y2="100%">
+      <stop offset="0" stop-color="#ff2a4b" />
+      <stop offset=".6" stop-color="#d90429" />
+      <stop offset="1" stop-color="#b3001b" />
+    </linearGradient>
+    <filter height="140%" id="a" width="140%" x="-20%" y="-20%">
+      <feGaussianBlur result="blur" stdDeviation="6" />
+      <feComposite in="SourceGraphic" in2="blur" />
+    </filter>
+  </defs>
+  <rect fill="url(#c)" height="500" width="500" />
+  <rect fill="none" height="460" width="460" rx="24" stroke="#fff" stroke-opacity=".05" stroke-width="2" x="20" y="20" />
+  <g transform="translate(20 -5)">
+    <path d="m60 215h25l15-45 15 80 20-125 20 160 20-100 15 45 15-15h70c30 0 70 40 100 70 60-70 100-140 50-200-40-50-90 0-90 0s-40-40-80-10c-30 23-33 60-10 77" fill="none" filter="url(#a)" stroke="url(#b)" stroke-linecap="round" stroke-width="15" />
+    <circle cx="245" cy="152" fill="url(#b)" r="14" filter="url(#a)" />
+    <circle cx="245" cy="152" fill="#fff" r="6" opacity=".9" />
+  </g>
+  <g transform="translate(250 375)" text-anchor="middle">
+    <text fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="62" font-weight="800" letter-spacing="14">NIMMR</text>
+    <line opacity=".6" stroke="#ff2a4b" stroke-width="2" x1="-95" x2="110" y1="16" y2="16" />
+    <text fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" letter-spacing="6.5" opacity=".7" x="4" y="38">MINISTRY OF HEALTH MALAYSIA</text>
+  </g>
+</svg>
