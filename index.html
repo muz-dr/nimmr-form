@@ -56,30 +56,24 @@ input[type="checkbox"]:disabled {
   height: 15px !important;
   margin: 0 !important;
   padding: 0 !important;
-  opacity: 1 !important;           /* never let the browser grey it out      */
+  opacity: 1 !important;           
   cursor: default;
   vertical-align: middle;
-  /* Unchecked look — a clearly visible empty control */
-  background: #2e333b !important;  /* dark neutral, distinct from page bg    */
-  border: 2px solid #606878 !important; /* mid-grey border, clearly visible  */
+  background: #2e333b !important;  
+  border: 2px solid #606878 !important; 
   box-shadow: none !important;
   transition: none !important;
 }
-/* Light-mode unchecked */
 [data-theme="light"] input[type="radio"]:disabled,
 [data-theme="light"] input[type="checkbox"]:disabled {
   background: #d8d4c8 !important;
   border-color: #8a8478 !important;
 }
-
-/* Radio shape */
 input[type="radio"]:disabled { border-radius: 50% !important; }
-/* Checkbox shape */
 input[type="checkbox"]:disabled { border-radius: 3px !important; }
 input[type="radio"]:checked:disabled {
   background: #2e333b !important;
   border-color: var(--accent-light) !important;
-  /* The "dot" is an inset circle shadow */
   box-shadow: inset 0 0 0 3.5px #2e333b,
               inset 0 0 0 7px var(--accent-light) !important;
 }
@@ -111,13 +105,11 @@ input[type="checkbox"]:checked:disabled {
   color: var(--text) !important;
   font-weight: 700 !important;
 }
-/* locked-card specific extras (death type cards, timi) */
 .locked-card .death-type-card{opacity:0.1;}
 .locked-card .death-type-card.selected{opacity:1;border-color:var(--accent-light);box-shadow:0 0 8px var(--accent-glow);}
 .locked-card .timi-item{opacity:0.1;}
 .locked-card .timi-item:has(input:checked){opacity:1;color:var(--text);font-weight:700;}
 
-/* Text inputs/selects/textareas when disabled — keep text readable */
 input[type=text]:disabled,
 input[type=number]:disabled,
 input[type=date]:disabled,
@@ -183,10 +175,6 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 .timi-item{display:flex;align-items:flex-start;gap:6px;font-size:.78rem;padding:.3rem;border-radius:4px;transition:all .2s;}
 .timi-item:hover{background:var(--surface2);}
 .timi-total{font-size:1.2rem;font-weight:900;color:var(--accent-light);background:var(--accent-glow);border:1px solid var(--accent);border-radius:4px;padding:2px 10px;}
-.gcs-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;}
-.gcs-row label{min-width:70px;font-size:.75rem;}
-.gcs-row input[type=range]{flex:1;accent-color:var(--accent-light);}
-.gcs-val{min-width:32px;text-align:center;font-weight:700;color:var(--accent-light);font-size:.85rem;}
 .gcs-total-box{background:var(--accent-glow);border:1px solid var(--accent);border-radius:4px;padding:4px 12px;font-weight:700;color:var(--accent-light);font-size:1rem;}
 .info-banner{background:rgba(37,99,168,.12);border-left:3px solid var(--accent-light);border-radius:0 5px 5px 0;padding:.6rem 1rem;font-size:.78rem;color:var(--text-muted);margin-bottom:.75rem;}
 .warn-banner{border-left:3px solid var(--danger-light);border-radius:0 5px 5px 0;padding:.6rem 1rem;font-size:.78rem;margin-bottom:.75rem;}
@@ -205,6 +193,15 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 #save-indicator{font-size:.7rem;color:var(--text-dim);display:flex;align-items:center;gap:4px;}
 #save-indicator.saved{color:var(--success);}
 .sub-section-title{font-size:.82rem;font-weight:700;display:block;margin:.75rem 0 .4rem;color:var(--text-muted);}
+
+/* RCA Table Styling */
+.rca-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: .5rem; }
+.rca-table th { background: var(--surface2); padding: 0.6rem; border: 1px solid var(--border); text-align: left; color: var(--text-muted); text-transform: uppercase; font-size: 0.72rem; }
+.rca-table td { padding: 0.45rem 0.6rem; border: 1px solid var(--border); vertical-align: middle; }
+.rca-table .rca-cat { font-weight: bold; background: rgba(37,99,168,0.1); color: var(--accent-light); font-size: 0.85rem; }
+.rca-table td:nth-child(2) { text-align: center; width: 70px; }
+.rca-table input[type="checkbox"] { transform: scale(1.1); cursor: pointer; accent-color: var(--accent-light); }
+
 @media(max-width:600px){.form-row{flex-direction:column;}.death-type-grid{grid-template-columns:1fr;}.timi-grid{grid-template-columns:1fr;}.form-header{flex-direction:column;}.topbar{padding:.5rem .75rem;}}
 @media print{.topbar,.modal-overlay{display:none!important;}body{background:#fff;color:#000;}.form-card{border:1px solid #ccc;}}
 </style>
@@ -227,6 +224,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     </div>
     <button class="btn btn-sm" onclick="toggleTheme()" id="theme-btn">☀ Light</button>
     <button class="btn btn-sm btn-primary" onclick="saveFormJSON()">💾 Save</button>
+    <button class="btn btn-sm" onclick="window.print()">🖨️ Print</button>
     <button class="btn btn-sm" onclick="openModal('load-modal')">📂 Load</button>
     <button class="btn btn-sm btn-gold" onclick="exportAllCSV()">📊 Export CSV</button>
     <div id="save-indicator">● Unsaved</div>
@@ -365,7 +363,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
   </div>
 </div>
 
-<!-- COMMITTEE MODAL -->
+<!-- COMMITTEE ANONYMISE MODAL -->
 <div class="modal-overlay" id="committee-modal">
   <div class="modal" style="max-width:400px;">
     <h3>🛡 Committee: Anonymise Form</h3>
@@ -373,6 +371,17 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-group"><label>Committee Password</label><input type="password" id="committee-password" placeholder=""></div>
     <div id="committee-error" style="color:var(--danger-light);font-size:.78rem;display:none;"></div>
     <div class="modal-actions"><button class="btn" onclick="closeModal('committee-modal')">Cancel</button><button class="btn btn-gold" onclick="submitCommittee()">Anonymise &amp; Lock</button></div>
+  </div>
+</div>
+
+<!-- COMMITTEE FINAL MODAL -->
+<div class="modal-overlay" id="committee-final-modal">
+  <div class="modal" style="max-width:400px;">
+    <h3>🛡 Committee: Finalise Case</h3>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem;">Enter the committee password to save the final decision and officially close this form.</p>
+    <div class="form-group"><label>Committee Password</label><input type="password" id="committee-final-password" placeholder=""></div>
+    <div id="committee-final-error" style="color:var(--danger-light);font-size:.78rem;display:none;"></div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal('committee-final-modal')">Cancel</button><button class="btn btn-gold" onclick="submitCommitteeFinal()">Finalise Form</button></div>
   </div>
 </div>
 
@@ -391,7 +400,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <div class="sig-container"><div class="sig-canvas-wrap"><canvas class="sig-pad" id="assessor-canvas" height="120"></canvas></div><div class="sig-controls"><button class="btn btn-sm" onclick="clearSig('assessor-canvas')">Clear</button></div></div>
     </div>
     <div id="assessor-sign-error" style="color:var(--danger-light);font-size:.78rem;display:none;"></div>
-    <div class="modal-actions"><button class="btn" onclick="closeModal('assessor-sign-modal')">Cancel</button><button class="btn btn-gold" onclick="submitAssessorSign()">Sign &amp; Finalise</button></div>
+    <div class="modal-actions"><button class="btn" onclick="closeModal('assessor-sign-modal')">Cancel</button><button class="btn btn-gold" onclick="submitAssessorSign()">Sign RCA</button></div>
   </div>
 </div>
 
@@ -415,7 +424,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="prog-step active" id="prog-1"><span class="step-num">1</span>Coordinator</div>
     <div class="prog-step" id="prog-2"><span class="step-num">2</span>MO/Specialist</div>
     <div class="prog-step" id="prog-3"><span class="step-num">3</span>HOD</div>
-    <div class="prog-step" id="prog-4"><span class="step-num">4</span>Committee</div>
+    <div class="prog-step" id="prog-4"><span class="step-num">4</span>Committee (Prep)</div>
     <div class="prog-step" id="prog-5"><span class="step-num">5</span>Assessor</div>
     <div class="prog-step" id="prog-6"><span class="step-num">✓</span>Finalised</div>
   </div>
@@ -552,24 +561,22 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <!-- PART A -->
     <div class="section-band"><h2>Part A — Inclusion / Exclusion Criteria</h2><div class="badge">COORDINATOR</div></div>
     <div class="form-card" id="inclusion-form-card">
-      <div class="info-banner"><strong>Inclusion Criteria:</strong> Age 25–54 at death · Death within 14 days of presentation to MOH hospital · Diagnosed with ACS, Stroke, CKD Stage 5, or Pneumonia during terminal admission.</div>
-      <div class="warn-banner">
-        <strong>⚠ Exclusion Criteria</strong> — Do NOT proceed if ANY of the following apply:
-        <ul class="exclusion-list" style="margin-top:.5rem;">
-          <li>Non-Malaysian citizen</li><li>Maternal mortality</li><li>Cases transferred from inpatient private hospitals</li>
-          <li>Self-inflicted injury / self-harm / violence / natural disaster</li><li>Active Cancer</li>
-          <li>Active tuberculosis on treatment (intensive / maintenance phase)</li>
-          <li>Patients on immunosuppressive drugs (prednisolone ≥10mg/day &gt;28 days, or others per Lampiran A)</li>
-        </ul>
+      <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--success);">Inclusion Criteria (Check all to proceed)</strong>
+      <div class="check-group" style="flex-direction:column;gap:4px;margin-bottom:1rem;">
+        <label class="check-item"><input type="checkbox" id="inc-age"> Age at death 25 - 54 years old</label>
+        <label class="check-item"><input type="checkbox" id="inc-14d"> Death within 14 days of presentation to MOH hospital</label>
+        <label class="check-item"><input type="checkbox" id="inc-ward"> Death occurring in Medical Wards, gazetted medical beds, or ED (registered under medical)</label>
+        <label class="check-item"><input type="checkbox" id="inc-dx"> Diagnosed to have either ACS, Stroke, CKD stage 5, or Pneumonia during terminal admission</label>
       </div>
-      <div class="form-row">
-        <div class="form-group w-half">
-          <label class="required">Exclusion Criteria Met?</label>
-          <div class="check-group">
-            <label class="check-item"><input type="radio" name="exclusion-met" value="No"> No — Proceed</label>
-            <label class="check-item"><input type="radio" name="exclusion-met" value="Yes"> Yes — STOP, do not complete form</label>
-          </div>
-        </div>
+      <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--danger-light);">Exclusion Criteria (Do NOT proceed if ANY met)</strong>
+      <div class="check-group" style="flex-direction:column;gap:4px;margin-bottom:1rem;">
+        <label class="check-item"><input type="checkbox" id="exc-non-my"> Non Malaysian citizen</label>
+        <label class="check-item"><input type="checkbox" id="exc-maternal"> Maternal mortality</label>
+        <label class="check-item"><input type="checkbox" id="exc-private"> Cases transferred from in patient private hospitals</label>
+        <label class="check-item"><input type="checkbox" id="exc-harm"> Self inflicted injury / self harm / violence / death due to natural disaster</label>
+        <label class="check-item"><input type="checkbox" id="exc-cancer"> Active Cancer</label>
+        <label class="check-item"><input type="checkbox" id="exc-ptb"> Active tuberculosis on treatment (intensive / maintenance phase)</label>
+        <label class="check-item"><input type="checkbox" id="exc-immuno"> Patients on immunosuppressive drugs</label>
       </div>
       <hr class="divider">
       <span class="sub-section-title">Source of Referral</span>
@@ -587,11 +594,12 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <div class="form-row">
         <div class="form-group w-third">
           <label>Hospital Admission Via</label>
-          <select id="admission-via" onchange="document.getElementById('direct-admission-group').style.display=this.value==='Referral from hospital/clinic'?'flex':'none'">
+          <select id="admission-via" onchange="document.getElementById('direct-admission-group').style.display=this.value==='Direct admission'?'flex':'none'">
             <option value="">Select...</option>
             <option>ED</option>
-            <option>OPD</option>
-            <option>Referral from hospital/clinic</option>
+            <option>Specialist Clinic</option>
+            <option>Daycare</option>
+            <option>Direct admission</option>
           </select>
         </div>
         <div class="form-group w-half" id="direct-admission-group" style="display:none;"><label>Referral Source Hospital/Clinic</label><input type="text" id="direct-admission-hospital" placeholder="Specify name of source hospital/clinic..."></div>
@@ -781,10 +789,30 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       </div>
       <hr class="divider">
       <span class="sub-section-title">GCS at Presentation</span>
-      <div class="gcs-row"><label>Eyes (E) /4</label><input type="range" id="gcs-e" min="1" max="4" value="4" oninput="updateGCS()"><span class="gcs-val" id="gcs-e-val">4</span></div>
-      <div class="gcs-row"><label>Verbal (V) /5</label><input type="range" id="gcs-v" min="1" max="5" value="5" oninput="updateGCS()"><span class="gcs-val" id="gcs-v-val">5</span></div>
-      <div class="gcs-row"><label>Motor (M) /6</label><input type="range" id="gcs-m" min="1" max="6" value="6" oninput="updateGCS()"><span class="gcs-val" id="gcs-m-val">6</span></div>
-      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;"><span style="font-size:.8rem;color:var(--text-muted);">Total GCS:</span><span class="gcs-total-box" id="gcs-total">15</span>/15</div>
+      <div class="form-row">
+        <div class="form-group w-quarter">
+          <label>Eyes (E) /4</label>
+          <input type="number" id="gcs-e" min="0" max="4" value="0" oninput="updateGCS()">
+        </div>
+        <div class="form-group w-quarter">
+          <label>Verbal (V) /5</label>
+          <input type="number" id="gcs-v" min="0" max="5" value="0" oninput="updateGCS()">
+        </div>
+        <div class="form-group w-quarter">
+          <label>Motor (M) /6</label>
+          <input type="number" id="gcs-m" min="0" max="6" value="0" oninput="updateGCS()">
+        </div>
+        <div class="form-group w-quarter">
+          <label>Modifier</label>
+          <div class="check-group" style="margin-top:2px;">
+            <label class="check-item"><input type="checkbox" id="gcs-t" onchange="updateGCS()"> Intubated (T)</label>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;">
+        <span style="font-size:.8rem;color:var(--text-muted);">Total GCS:</span>
+        <span class="gcs-total-box" id="gcs-total">0</span>
+      </div>
       <hr class="divider">
       <span class="sub-section-title">6.2 Admission Details</span>
       <div class="form-row">
@@ -916,6 +944,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
                 <label class="check-item"><input type="checkbox" id="nap-gp"> GP Receptor Inhibitor</label>
                 <label class="check-item"><input type="checkbox" id="nap-contra"> Contraindicated</label>
                 <label class="check-item"><input type="checkbox" id="nap-none"> None</label>
+                <label class="check-item"><input type="checkbox" id="nap-other"> Other: <input type="text" id="nap-other-text" style="width:100px;display:inline-block;padding:2px;"></label>
               </div>
             </div>
             <div class="form-group">
@@ -926,6 +955,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
                 <label class="check-item"><input type="checkbox" id="nac-ufh"> Unfractionated Heparin</label>
                 <label class="check-item"><input type="checkbox" id="nac-contra"> Contraindicated</label>
                 <label class="check-item"><input type="checkbox" id="nac-none"> None</label>
+                <label class="check-item"><input type="checkbox" id="nac-other"> Other: <input type="text" id="nac-other-text" style="width:100px;display:inline-block;padding:2px;"></label>
               </div>
             </div>
           </div>
@@ -963,6 +993,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
                 <label class="check-item"><input type="checkbox" id="sap-gp"> GP Receptor Inhibitor</label>
                 <label class="check-item"><input type="checkbox" id="sap-contra"> Contraindicated</label>
                 <label class="check-item"><input type="checkbox" id="sap-none"> None</label>
+                <label class="check-item"><input type="checkbox" id="sap-other"> Other: <input type="text" id="sap-other-text" style="width:100px;display:inline-block;padding:2px;"></label>
               </div>
             </div>
             <div class="form-group">
@@ -973,6 +1004,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
                 <label class="check-item"><input type="checkbox" id="sac-ufh"> Unfractionated Heparin</label>
                 <label class="check-item"><input type="checkbox" id="sac-contra"> Contraindicated</label>
                 <label class="check-item"><input type="checkbox" id="sac-none"> None</label>
+                <label class="check-item"><input type="checkbox" id="sac-other"> Other: <input type="text" id="sac-other-text" style="width:100px;display:inline-block;padding:2px;"></label>
               </div>
             </div>
           </div>
@@ -1031,7 +1063,14 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div id="part-stroke-section" class="part-section">
       <div class="section-band" style="border-left-color:var(--warning);"><h2>Part C — Stroke-Related Death</h2><div class="badge" style="border-color:var(--warning);color:var(--warning);">STROKE CASES</div></div>
       <div class="form-card">
-        <div class="warn-banner">Exclusion: TIA · Space-occupying lesion (SOL) · Non-atherosclerotic stroke · Stroke mimic · Subarachnoid or subdural haemorrhage</div>
+        <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--danger-light);">Specific Disease-Related Exclusion Criteria (Do NOT fill Stroke section if ANY met)</strong>
+        <div class="check-group" style="margin-bottom:1rem;">
+          <label class="check-item"><input type="checkbox" id="st-exc-tia"> Transient ischaemic attack</label>
+          <label class="check-item"><input type="checkbox" id="st-exc-sol"> Space-occupying lesion (SOL)</label>
+          <label class="check-item"><input type="checkbox" id="st-exc-nonath"> Non-atherosclerotic related stroke</label>
+          <label class="check-item"><input type="checkbox" id="st-exc-mimic"> Stroke mimic</label>
+          <label class="check-item"><input type="checkbox" id="st-exc-sah"> Subarachnoid or subdural haemorrhage</label>
+        </div>
         <div class="form-row">
           <div class="form-group w-half">
             <label>Stroke Occurred</label>
@@ -1555,10 +1594,10 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <span style="font-size:.78rem;color:var(--text-muted);">After signing, awaits HOD signature to lock.</span>
     </div>
     <div id="mo-sig-display" style="display:none;margin-top:1rem;">
-      <div class="form-card" style="border-color:#3498db;">
+      <div class="form-card" style="border-color:var(--accent-light);">
         <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
-          <span style="color:#3498db;font-size:1rem;">✅</span>
-          <div><div style="font-size:.8rem;font-weight:700;color:#3498db;">Signed by MO/Specialist</div><div class="sig-info-badge" id="mo-sig-info"></div></div>
+          <span style="color:var(--accent-light);font-size:1rem;">✅</span>
+          <div><div style="font-size:.8rem;font-weight:700;color:var(--accent-light);">Signed by MO/Specialist</div><div class="sig-info-badge" id="mo-sig-info"></div></div>
           <img id="mo-sig-img" style="max-width:180px;border:1px solid var(--border);border-radius:4px;background:#fff;" alt="MO signature">
         </div>
       </div>
@@ -1584,24 +1623,10 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     </div>
   </div>
 
-  <!-- ═══ COMMITTEE ═══ -->
+  <!-- ═══ COMMITTEE (ANONYMISE ONLY) ═══ -->
   <div id="section-committee" style="display:none;">
-    <div class="section-band" style="border-left-color:var(--gold);"><h2>NIMMR Committee Review</h2><div class="badge" style="border-color:var(--gold);color:var(--gold);">COMMITTEE ONLY</div></div>
+    <div class="section-band" style="border-left-color:var(--gold);"><h2>NIMMR Committee — Preparation</h2><div class="badge" style="border-color:var(--gold);color:var(--gold);">COMMITTEE ONLY</div></div>
     <div class="anon-banner">🛡 <strong>Committee Anonymisation:</strong> This will hide hospital name and all personnel identifiers so the assessor cannot trace this back to the facility. This action is irreversible.</div>
-    <div class="form-card">
-      <div class="form-row">
-        <div class="form-group w-half"><label>Committee Decision Date</label><input type="date" id="committee-date"></div>
-        <div class="form-group w-half">
-          <label>Committee Decision</label>
-          <div class="check-group" style="flex-direction:column;">
-            <label class="check-item"><input type="radio" name="committee-decision" value="No Further Action"> No Further Action</label>
-            <label class="check-item"><input type="radio" name="committee-decision" value="Department Level Discussion"> Department Level Discussion</label>
-            <label class="check-item"><input type="radio" name="committee-decision" value="Hospital Level Discussion"> Hospital Level Discussion</label>
-            <label class="check-item"><input type="radio" name="committee-decision" value="State Level Discussion"> State Level Discussion</label>
-          </div>
-        </div>
-      </div>
-    </div>
     <div id="committee-btn" style="margin-top:1rem;">
       <button class="btn btn-gold" style="font-size:.9rem;padding:.6rem 1.5rem;" onclick="openModal('committee-modal')">🛡 Anonymise &amp; Send to Assessor</button>
     </div>
@@ -1609,64 +1634,113 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 
   <!-- ═══ ASSESSOR ═══ -->
   <div id="section-assessor" style="display:none;">
-    <div class="section-band" style="border-left-color:#e74c3c;"><h2>NIMMR Assessor Review</h2><div class="badge" style="border-color:#e74c3c;color:#e9b0a8;">ASSESSOR ONLY</div></div>
-    <div class="form-card">
+    <div class="section-band" style="border-left-color:var(--danger-light);"><h2>NIMMR Assessor Review</h2><div class="badge" style="border-color:var(--danger-light);color:var(--danger-light);">ASSESSOR ONLY</div></div>
+    <div class="form-card" id="assessor-form-card">
       <div class="form-group"><label class="required">Assessor Comments (10–50 words)</label><textarea id="assessor-comments-display" rows="3"></textarea></div>
       <hr class="divider">
       <div class="form-group">
-        <label>Contributing Factors in NIMMR <span class="hint">(select all that apply)</span></label>
-        <span class="sub-section-title" style="margin-top:.5rem;">Pre-Admission &amp; Outpatient / Initial Presentation &amp; Diagnosis / General</span>
-        <div class="check-group" style="flex-direction:column;gap:.25rem;">
-          <label class="check-item"><input type="checkbox" id="cf-delayed-present"> Delayed patient presentation to healthcare facilities</label>
-          <label class="check-item"><input type="checkbox" id="cf-delayed-diag"> Delayed or inaccurate diagnosis</label>
-          <label class="check-item"><input type="checkbox" id="cf-inadequate-assess"> Inadequate assessment of disease severity</label>
-          <label class="check-item"><input type="checkbox" id="cf-new-complex"> Newly diagnosed complex medical/surgical condition</label>
-          <label class="check-item"><input type="checkbox" id="cf-placement"> Inappropriate placement of a critically ill patient</label>
-          <label class="check-item"><input type="checkbox" id="cf-staffing"> Inadequate staffing (inappropriate patient-to-staff ratio)</label>
-          <label class="check-item"><input type="checkbox" id="cf-equipment"> Equipment unavailability / malfunction / delayed access</label>
-          <label class="check-item"><input type="checkbox" id="cf-comm"> Communication breakdown between healthcare teams</label>
-          <label class="check-item"><input type="checkbox" id="cf-human"> Human factors (fatigue / high workload / distraction)</label>
-          <label class="check-item"><input type="checkbox" id="cf-patient-factors"> Patient-related factors (refusal / poor health literacy / financial constraints)</label>
-          <label class="check-item"><input type="checkbox" id="cf-no-screening"> Lack of active screening for patients with risk factors</label>
-          <label class="check-item"><input type="checkbox" id="cf-preop"> Inadequate optimisation of pre-existing medical/surgical conditions</label>
-          <label class="check-item"><input type="checkbox" id="cf-noncompliance"> Patient non-compliance to medication and follow-up</label>
-          <label class="check-item"><input type="checkbox" id="cf-financial"> Financial constraints</label>
-          <label class="check-item"><input type="checkbox" id="cf-inv-delay"> Delays in obtaining investigation results</label>
-          <label class="check-item"><input type="checkbox" id="cf-bed"> Bed shortages / resource limitations</label>
-          <label class="check-item"><input type="checkbox" id="cf-system-delay"> System/process-related delays</label>
-        </div>
-        <span class="sub-section-title" style="margin-top:.75rem;">Inpatient Management &amp; Monitoring / Active Treatment &amp; Procedural</span>
-        <div class="check-group" style="flex-direction:column;gap:.25rem;">
-          <label class="check-item"><input type="checkbox" id="cf-monitoring"> Inadequate monitoring of patients</label>
-          <label class="check-item"><input type="checkbox" id="cf-drug-sel"> Inappropriate drug selection (e.g. inappropriate choice of antibiotics)</label>
-          <label class="check-item"><input type="checkbox" id="cf-drug-dose"> Inappropriate drug dosage or administration frequency</label>
-          <label class="check-item"><input type="checkbox" id="cf-abx-delay"> Delay in administering critical medications (e.g. antibiotics &gt;1h)</label>
-          <label class="check-item"><input type="checkbox" id="cf-inadequate-tx"> Inadequate treatment of ongoing conditions (e.g. inadequacy of dialysis / anaemia)</label>
-          <label class="check-item"><input type="checkbox" id="cf-ipc"> Non-compliance to Infection Prevention and Control (IPC) practices</label>
-          <label class="check-item"><input type="checkbox" id="cf-time-critical"> Delay in time-critical therapies (door-to-needle &gt;30 min / door-to-balloon &gt;120 min)</label>
-          <label class="check-item"><input type="checkbox" id="cf-delayed-proc"> Delayed or omitted inpatient procedures (e.g. inpatient COROS or CABG)</label>
-          <label class="check-item"><input type="checkbox" id="cf-transfer-delay"> Delay in inter-facility transfer for intervention (door-in-door-out &gt;30 min)</label>
-          <label class="check-item"><input type="checkbox" id="cf-anatomy"> Anatomical challenges (high thrombotic burden / abnormal coronary anatomy)</label>
-          <label class="check-item"><input type="checkbox" id="cf-vascular-access"> Vascular access problems</label>
-          <label class="check-item"><input type="checkbox" id="cf-proc-compl"> Procedural complications (e.g. failed thrombolysis / PCI dissection / perforation / acute stroke)</label>
-          <label class="check-item"><input type="checkbox" id="cf-pt-refusal"> Patient or family refusal of intervention (e.g. dialysis)</label>
-          <label class="check-item"><input type="checkbox" id="cf-life-threat"> Development of life-threatening clinical complications (e.g. cardiogenic shock / arrhythmias / acute HF / VSD/MR)</label>
-        </div>
-        <div class="form-group" style="margin-top:.75rem;">
-          <label>Other Contributing Factors (specify)</label>
-          <input type="text" id="cf-other-text" placeholder="Specify other factors...">
-        </div>
+        <label style="margin-bottom:0.5rem;display:block;">Contributing Factors in NIMMR</label>
+        
+        <table class="rca-table">
+          <thead>
+            <tr>
+              <th>Category / Contributory Factor</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- GENERAL -->
+            <tr><td colspan="2" class="rca-cat">General contribution factors</td></tr>
+            <tr><td>Equipment unavailability, malfunction, or delayed access</td><td><input type="checkbox" id="rca-gen-equip"></td></tr>
+            <tr><td>Communication breakdown between healthcare teams</td><td><input type="checkbox" id="rca-gen-comm"></td></tr>
+            <tr><td>Delays in obtaining investigation results</td><td><input type="checkbox" id="rca-gen-inv"></td></tr>
+            <tr><td>Bed shortages or resource limitations</td><td><input type="checkbox" id="rca-gen-bed"></td></tr>
+            <tr><td>System/process-related delays</td><td><input type="checkbox" id="rca-gen-sys"></td></tr>
+            <tr><td>Human factors (e.g., fatigue, high workload, distraction)</td><td><input type="checkbox" id="rca-gen-human"></td></tr>
+            <tr><td>Patient-related factors (e.g., refusal of treatment, poor health literacy, financial constraints)</td><td><input type="checkbox" id="rca-gen-patient"></td></tr>
+            
+            <!-- PRE-ADMISSION -->
+            <tr><td colspan="2" class="rca-cat">Pre-Admission &amp; Outpatient</td></tr>
+            <tr><td>Lack of active screening for patients with risk factors</td><td><input type="checkbox" id="rca-pre-screen"></td></tr>
+            <tr><td>Inadequate optimisation of pre-existing medical or surgical conditions</td><td><input type="checkbox" id="rca-pre-opt"></td></tr>
+            <tr><td>Patient non-compliance to medication and follow-up</td><td><input type="checkbox" id="rca-pre-noncomp"></td></tr>
+            <tr><td>Financial constraints</td><td><input type="checkbox" id="rca-pre-fin"></td></tr>
+            
+            <!-- INITIAL PRESENTATION -->
+            <tr><td colspan="2" class="rca-cat">Initial Presentation &amp; Diagnosis</td></tr>
+            <tr><td>Delayed patient presentation to healthcare facilities</td><td><input type="checkbox" id="rca-init-delay"></td></tr>
+            <tr><td>Delayed or inaccurate diagnosis</td><td><input type="checkbox" id="rca-init-diag"></td></tr>
+            <tr><td>Inadequate assessment of disease severity</td><td><input type="checkbox" id="rca-init-sev"></td></tr>
+            <tr><td>Newly diagnosed complex medical/surgical condition</td><td><input type="checkbox" id="rca-init-new"></td></tr>
+            <tr><td>Inappropriate placement of a critically ill patient</td><td><input type="checkbox" id="rca-init-place"></td></tr>
+            <tr><td>Inadequate staffing (Inappropriate patient-to-staff ratio)</td><td><input type="checkbox" id="rca-init-staff"></td></tr>
+            
+            <!-- ACTIVE TREATMENT -->
+            <tr><td colspan="2" class="rca-cat">Active Treatment &amp; Procedural</td></tr>
+            <tr><td>Delay in time-critical therapies (e.g., door-to-needle &gt; 30 mins, door-to-balloon &gt; 120 mins)</td><td><input type="checkbox" id="rca-tx-time"></td></tr>
+            <tr><td>Delayed or omitted inpatient procedures (e.g., inpatient COROS or CABG)</td><td><input type="checkbox" id="rca-tx-proc"></td></tr>
+            <tr><td>Delay in inter-facility transfer for intervention (e.g., Door-in-door-out &gt; 30 mins)</td><td><input type="checkbox" id="rca-tx-transfer"></td></tr>
+            <tr><td>Anatomical challenges (e.g., high thrombotic burden, abnormal coronary artery anatomy)</td><td><input type="checkbox" id="rca-tx-anat"></td></tr>
+            <tr><td>Vascular access problems</td><td><input type="checkbox" id="rca-tx-vasc"></td></tr>
+            <tr><td>Procedural complications (e.g., failed thrombolytic therapy, PCI-related dissection, perforation, or acute stroke)</td><td><input type="checkbox" id="rca-tx-comp"></td></tr>
+            <tr><td>Patient or family refusal of intervention (e.g., dialysis)</td><td><input type="checkbox" id="rca-tx-refuse"></td></tr>
+            
+            <!-- INPATIENT -->
+            <tr><td colspan="2" class="rca-cat">Inpatient Management &amp; Monitoring</td></tr>
+            <tr><td>Inadequate monitoring of patients</td><td><input type="checkbox" id="rca-inp-mon"></td></tr>
+            <tr><td>Inappropriate drug selection (e.g., inappropriate choice of antibiotics)</td><td><input type="checkbox" id="rca-inp-drug"></td></tr>
+            <tr><td>Inappropriate drug dosage or administration frequency</td><td><input type="checkbox" id="rca-inp-dose"></td></tr>
+            <tr><td>Delay in administering critical medications (e.g., antibiotics &gt; 1hr)</td><td><input type="checkbox" id="rca-inp-admin"></td></tr>
+            <tr><td>Inadequate treatment of ongoing conditions (e.g., inadequacy of dialysis, inadequate treatment of anemia)</td><td><input type="checkbox" id="rca-inp-tx"></td></tr>
+            <tr><td>Non-compliance to Infection Prevention and Control (IPC) practices</td><td><input type="checkbox" id="rca-inp-ipc"></td></tr>
+            <tr><td>Development of life-threatening clinical complications (e.g., cardiogenic shock, arrhythmias, acute heart failure, acute ventricular/mitral valve rupture)</td><td><input type="checkbox" id="rca-inp-life"></td></tr>
+            
+            <!-- OTHERS -->
+            <tr><td colspan="2" class="rca-cat">Others</td></tr>
+            <tr>
+              <td>Others (Please specify): <input type="text" id="rca-other-text" style="width:250px; display:inline-block; margin-left: 10px; padding:0.3rem;"></td>
+              <td><input type="checkbox" id="rca-other-check"></td>
+            </tr>
+          </tbody>
+        </table>
+
       </div>
-      <div id="assessor-sig-display" style="display:none;margin-top:.75rem;">
+      <div id="assessor-sig-display" style="display:none;margin-top:1.5rem;">
         <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
           <span style="color:var(--success);">✅</span>
-          <div><div style="font-size:.8rem;font-weight:700;color:var(--success);">Signed by Assessor — FINALISED</div><div class="sig-info-badge" id="assessor-sig-info"></div></div>
+          <div><div style="font-size:.8rem;font-weight:700;color:var(--success);">Signed by Assessor</div><div class="sig-info-badge" id="assessor-sig-info"></div></div>
           <img id="assessor-sig-img" style="max-width:180px;border:1px solid var(--border);border-radius:4px;background:#fff;" alt="Assessor signature">
         </div>
       </div>
     </div>
     <div id="assessor-sign-btn" style="margin-top:1rem;">
-      <button class="btn btn-gold" style="font-size:.9rem;padding:.6rem 1.5rem;" onclick="openModal('assessor-sign-modal')">✍️ Assessor — Sign &amp; Finalise</button>
+      <button class="btn btn-gold" style="font-size:.9rem;padding:.6rem 1.5rem;" onclick="openModal('assessor-sign-modal')">✍️ Assessor — Sign Review</button>
+    </div>
+  </div>
+
+  <!-- ═══ COMMITTEE FINAL ═══ -->
+  <div id="section-committee-final" style="display:none;">
+    <div class="section-band" style="border-left-color:var(--success);"><h2>Committee Final Decision</h2><div class="badge" style="border-color:var(--success);color:var(--success);">COMMITTEE ONLY</div></div>
+    <div class="form-card" id="committee-final-card">
+      <div class="form-row">
+        <div class="form-group w-quarter"><label class="required">Committee Decision Date</label><input type="date" id="committee-date"></div>
+        <div class="form-group w-third">
+          <label class="required">Committee Decision</label>
+          <div class="check-group" style="flex-direction:column;">
+            <label class="check-item"><input type="radio" name="committee-decision" value="No Further Action"> No Further Action</label>
+            <label class="check-item"><input type="radio" name="committee-decision" value="Department Level Discussion"> Department Level Discussion</label>
+            <label class="check-item"><input type="radio" name="committee-decision" value="Hospital Level Discussion"> Hospital Level Discussion</label>
+            <label class="check-item"><input type="radio" name="committee-decision" value="State Level Discussion"> State Level Discussion</label>
+          </div>
+        </div>
+        <div class="form-group w-half">
+          <label>Committee Comments</label>
+          <textarea id="committee-comments" rows="4" placeholder="Enter final committee remarks..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div id="committee-final-btn" style="margin-top:1rem;">
+      <button class="btn btn-primary" style="font-size:.9rem;padding:.6rem 1.5rem; background:var(--success); border-color:var(--success);" onclick="openModal('committee-final-modal')">🔒 Finalise Form</button>
     </div>
   </div>
 
@@ -1778,7 +1852,7 @@ const hospitalDataRaw = [
         { state: "Sarawak", name: "Hospital Sri Aman", jenis: 3, cluster: "Sarawak Tenggara" },
         { state: "Sarawak", name: "Hospital Sarikei", jenis: 3, cluster: "Sarawak Timur" },
         { state: "Perak", name: "Hospital Gerik", jenis: 4, cluster: "Perak Utara" },
-        { state: "Perak", name: "Hospital Seri Iskandar", 4: 4, cluster: "Manjung" },
+        { state: "Perak", name: "Hospital Seri Iskandar", jenis: 4, cluster: "Manjung" },
         { state: "Perak", name: "Hospital Selama", jenis: 4, cluster: "Perak Utara" },
         { state: "Perak", name: "Hospital Parit Buntar", jenis: 4, cluster: "Perak Utara" },
         { state: "Perak", name: "Hospital Sungai Siput", jenis: 4, cluster: "Ipoh" },
@@ -1905,8 +1979,9 @@ function calcBMI(){
 function updateDeathTypes(){
   ['acs','stroke','ckd','pneumo'].forEach(t=>{
     const cb=document.getElementById('dt-'+t);
-    document.getElementById('dtc-'+t).classList.toggle('selected',cb.checked);
-    formState.deathTypes[t]=cb.checked;
+    const card=document.getElementById('dtc-'+t);
+    if(cb&&card)card.classList.toggle('selected',cb.checked);
+    formState.deathTypes[t]=cb?cb.checked:false;
   });
   updateSignCodePreview();
 }
@@ -1971,7 +2046,6 @@ function submitCoordSign(){
   const sigData=getSigDataURL('coord-canvas');
   formState.caseCode=`${code}-${getLastSixIC()}${getDeathDateCode()}-M`;
   formState.signatures.coord={name,initials,datetime:now,sigData,ic6:getLastSixIC(),caseCode:formState.caseCode};
-  // Sync initials to form field
   document.getElementById('form-coord-initials').value=initials;
   document.getElementById('case-code').value=formState.caseCode;
   document.getElementById('display-case-code').textContent=formState.caseCode;
@@ -1993,7 +2067,11 @@ function submitCoordSign(){
 function showDiseaseParts(){
   ['acs','stroke','ckd','pneumo'].forEach((t,i)=>{
     const ids=['part-acs-section','part-stroke-section','part-ckd-section','part-pneumo-section'];
-    document.getElementById(ids[i]).classList.toggle('active',formState.deathTypes[t]);
+    const el = document.getElementById(ids[i]);
+    if(el) {
+        if(formState.deathTypes[t]) el.classList.add('active');
+        else el.classList.remove('active');
+    }
   });
 }
 
@@ -2028,8 +2106,7 @@ function submitMOSign(){
   document.getElementById('mo-sig-display').style.display='block';
   document.getElementById('mo-sign-section').style.display='none';
   
-  // LOCK clinical section
-  document.getElementById('section-clinical').querySelectorAll('input,select,textarea').forEach(el=>el.disabled=true);
+  lockSection('section-clinical');
   
   advanceProgress(2);updateStageDisplay('STAGE 3: Awaiting HOD Signature','The Head of Department must now review and sign.');
   closeModal('mo-sign-modal');markUnsaved();
@@ -2058,22 +2135,24 @@ function submitHODSign(){
   document.getElementById('hod-sig-img').src=sigData;
   document.getElementById('hod-sig-display').style.display='block';
   document.getElementById('hod-sign-btn').style.display='none';
-  document.getElementById('section-clinical').querySelectorAll('input,select,textarea').forEach(el=>el.disabled=true);
+  
+  lockSection('section-clinical');
+  
   document.getElementById('section-committee').style.display='block';
   advanceProgress(3);updateStageDisplay('STAGE 4: Committee Review','Form locked. Send to NIMMR Committee for anonymisation.');
   closeModal('hod-sign-modal');saveFormJSON();
 }
 
-// ── COMMITTEE ──
+// ── COMMITTEE ANONYMISE ──
 function submitCommittee(){
   const pwd=document.getElementById('committee-password').value;
   const err=document.getElementById('committee-error');
   if(pwd!==_ck){err.textContent='❌ Incorrect committee password.';err.style.display='block';return;}
   err.style.display='none';
   formState.anonymised=true;formState.stage=4;
-  ['coord-sig-info','mo-sig-info','hod-sig-info'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='[SIGNATURE HIDDEN FOR ANONYMITY]';el.style.color='var(--text-dim)';}});
+   ['coord-sig-info','mo-sig-info','hod-sig-info'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='[SIGNATURE HIDDEN FOR ANONYMITY]';el.style.color='var(--text-dim)';}});
   ['coord-sig-img','mo-sig-img','hod-sig-img'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  
+
   const fieldsToAnon = ['hospital-name', 'ic-number', 'resp-name', 'resp-desig', 'resp-contact', 'resp-email'];
   fieldsToAnon.forEach(id => {
     const el = document.getElementById(id);
@@ -2100,16 +2179,42 @@ function submitAssessorSign(){
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
   if(isSigEmpty('assessor-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
+  
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('assessor-canvas');
-  formState.signatures.assessor={name,deathCategory:cat,comments,datetime:now,sigData};formState.stage=5;
+  formState.signatures.assessor={name,deathCategory:cat,comments,datetime:now,sigData};
+  formState.stage=5;
+  
+  document.getElementById('assessor-comments-display').value=comments;
   document.getElementById('assessor-sig-info').textContent=`Assessor: ${name} | Category: ${cat} | ${now}`;
   document.getElementById('assessor-sig-img').src=sigData;
   document.getElementById('assessor-sig-display').style.display='block';
   document.getElementById('assessor-sign-btn').style.display='none';
-  document.getElementById('section-final').style.display='block';
-  advanceProgress(5);advanceProgress(6);
-  updateStageDisplay('STAGE 6: FINALISED','All signatures complete. Form is finalised.');
+  
+  lockSection('assessor-form-card');
+  
+  document.getElementById('section-committee-final').style.display='block';
+  
+  advanceProgress(5);
+  updateStageDisplay('STAGE 6: Committee Final Decision','Assessor review complete. Committee to finalise form.');
   closeModal('assessor-sign-modal');saveFormJSON();
+}
+
+// ── COMMITTEE FINAL ──
+function submitCommitteeFinal(){
+  const pwd=document.getElementById('committee-final-password').value;
+  const err=document.getElementById('committee-final-error');
+  if(pwd!==_ck){err.textContent='❌ Incorrect committee password.';err.style.display='block';return;}
+  err.style.display='none';
+  
+  formState.stage=6;
+  lockSection('committee-final-card');
+  
+  document.getElementById('committee-final-btn').style.display='none';
+  document.getElementById('section-final').style.display='block';
+  
+  advanceProgress(6);
+  updateStageDisplay('STAGE 6: FINALISED','All signatures complete. Form is finalised.');
+  closeModal('committee-final-modal');saveFormJSON();
 }
 
 // ── PROGRESS ──
@@ -2125,9 +2230,15 @@ function updateStageDisplay(title,desc){
 
 // ── GCS / TIMI ──
 function updateGCS(){
-  const e=parseInt(document.getElementById('gcs-e').value),v=parseInt(document.getElementById('gcs-v').value),m=parseInt(document.getElementById('gcs-m').value);
-  document.getElementById('gcs-e-val').textContent=e;document.getElementById('gcs-v-val').textContent=v;document.getElementById('gcs-m-val').textContent=m;
-  document.getElementById('gcs-total').textContent=e+v+m;
+  const eEl=document.getElementById('gcs-e'), vEl=document.getElementById('gcs-v'), mEl=document.getElementById('gcs-m'), tEl=document.getElementById('gcs-t');
+  if(!eEl) return;
+  if(eEl.closest('.locked-card')) return; // Safety switch
+  
+  let e=parseInt(eEl.value)||0, v=parseInt(vEl.value)||0, m=parseInt(mEl.value)||0;
+  if(e<0){e=0;eEl.value=0;} if(e>4){e=4;eEl.value=4;}
+  if(m<0){m=0;mEl.value=0;} if(m>6){m=6;mEl.value=6;}
+  if(tEl&&tEl.checked){ vEl.disabled=true; vEl.value=0; v=0; } else { vEl.disabled=false; if(v<0){v=0;vEl.value=0;} if(v>5){v=5;vEl.value=5;} }
+  document.getElementById('gcs-total').textContent=(e+v+m);
 }
 function calcTIMI(){let s=0;for(let i=1;i<=7;i++){if(document.getElementById('timi-'+i).checked)s++;}document.getElementById('timi-total').textContent=s;}
 
@@ -2178,7 +2289,9 @@ function collectAllData(){
       formIssuedDate:gv('form-issued-date'),coordInitials:gv('form-coord-initials')
     },
     partA:{
-      exclusionMet:gr('exclusion-met'),referralSource:gr('referral-source'),
+      incAge:gc('inc-age'),inc14d:gc('inc-14d'),incWard:gc('inc-ward'),incDx:gc('inc-dx'),
+      excNonMy:gc('exc-non-my'),excMaternal:gc('exc-maternal'),excPrivate:gc('exc-private'),excHarm:gc('exc-harm'),excCancer:gc('exc-cancer'),excPTB:gc('exc-ptb'),excImmuno:gc('exc-immuno'),
+      referralSource:gr('referral-source'),
       admissionVia:gv('admission-via'),directAdmissionHospital:gv('direct-admission-hospital'),
       transferred:gr('transferred'),
       prevEncDate:gv('prev-enc-date'),prevEncTime:gv('prev-enc-time'),
@@ -2201,8 +2314,8 @@ function collectAllData(){
     vaccination:{influenza:gr('vax-flu'),pneumococcal:gr('vax-pneumo'),covid:gr('vax-covid')},
     vitals:{
       sbp:gv('sbp'),dbp:gv('dbp'),pr:gv('pr'),bg:gv('bg'),rr:gv('rr'),temp:gv('temp'),spo2:gv('spo2'),
-      gcsE:gv('gcs-e'),gcsV:gv('gcs-v'),gcsM:gv('gcs-m'),
-      gcsTotal:String(parseInt(gv('gcs-e')||1)+parseInt(gv('gcs-v')||1)+parseInt(gv('gcs-m')||1)),
+      gcsE:gv('gcs-e'),gcsV:gv('gcs-v'),gcsM:gv('gcs-m'),gcsT:gc('gcs-t'),
+      gcsTotal:document.getElementById('gcs-total')?.textContent + (gc('gcs-t')?'T':''),
       imAssessed:gr('im-assessed'),imAssessDate:gv('im-assess-date'),imAssessTime:gv('im-assess-time'),
       icuManaged:gr('icu-managed'),ventilated:gr('ventilated')
     },
@@ -2212,10 +2325,11 @@ function collectAllData(){
       onsetKnown:gr('acs-onset-known'),onsetDate:gv('acs-onset-date'),onsetTime:gv('acs-onset-time'),presentationDate:gv('acs-presentation-date'),
       troponin:gv('troponin'),ckmb:gv('ckmb'),ccuAdmit:gr('ccu-admit'),ccuNoReason:gr('ccu-no-reason'),
       timiScore:gv('timi-total')||document.getElementById('timi-total')?.textContent||'0',
-      nstemi:{ap_aspirin:gc('nap-aspirin'),ap_clopi:gc('nap-clopi'),ap_tica:gc('nap-tica'),ap_ticlo:gc('nap-ticlo'),ap_gp:gc('nap-gp'),ap_contra:gc('nap-contra'),ap_none:gc('nap-none'),ac_fondap:gc('nac-fondap'),ac_lmwh:gc('nac-lmwh'),ac_ufh:gc('nac-ufh'),ac_contra:gc('nac-contra'),ac_none:gc('nac-none'),statin:gr('nstemi-statin'),ace:gr('nstemi-ace'),bb:gr('nstemi-bb'),cath:gr('nstemi-cath'),pci:gr('nstemi-pci')},
-      stemi:{killip:gr('killip'),fibrinGiven:gr('fibrin-given'),fibrinType:gv('fibrin-type'),d2n:gv('d2n'),fn_ppci:gc('fn-primary-pci'),fn_12hHosp:gc('fn-12h-hosp'),fn_12hPt:gc('fn-12h-pt'),fn_contra:gc('fn-contra'),fn_consent:gc('fn-consent'),fn_otherText:gv('fn-other-text'),cath:gr('stemi-cath'),pci:gr('stemi-pci'),d2b:gv('d2b'),ap_aspirin:gc('sap-aspirin'),ap_clopi:gc('sap-clopi'),ap_tica:gc('sap-tica'),ap_ticlo:gc('sap-ticlo'),ap_gp:gc('sap-gp'),ap_contra:gc('sap-contra'),ap_none:gc('sap-none'),ac_fondap:gc('sac-fondap'),ac_lmwh:gc('sac-lmwh'),ac_ufh:gc('sac-ufh'),ac_contra:gc('sac-contra'),ac_none:gc('sac-none'),statin:gr('stemi-statin'),ace:gr('stemi-ace'),bb:gr('stemi-bb')}
+      nstemi:{ap_aspirin:gc('nap-aspirin'),ap_clopi:gc('nap-clopi'),ap_tica:gc('nap-tica'),ap_ticlo:gc('nap-ticlo'),ap_gp:gc('nap-gp'),ap_contra:gc('nap-contra'),ap_none:gc('nap-none'),ap_other:gc('nap-other'),ap_otherText:gv('nap-other-text'),ac_fondap:gc('nac-fondap'),ac_lmwh:gc('nac-lmwh'),ac_ufh:gc('nac-ufh'),ac_contra:gc('nac-contra'),ac_none:gc('nac-none'),ac_other:gc('nac-other'),ac_otherText:gv('nac-other-text'),statin:gr('nstemi-statin'),ace:gr('nstemi-ace'),bb:gr('nstemi-bb'),cath:gr('nstemi-cath'),pci:gr('nstemi-pci')},
+      stemi:{killip:gr('killip'),fibrinGiven:gr('fibrin-given'),fibrinType:gv('fibrin-type'),d2n:gv('d2n'),fn_ppci:gc('fn-primary-pci'),fn_12hHosp:gc('fn-12h-hosp'),fn_12hPt:gc('fn-12h-pt'),fn_contra:gc('fn-contra'),fn_consent:gc('fn-consent'),fn_otherText:gv('fn-other-text'),cath:gr('stemi-cath'),pci:gr('stemi-pci'),d2b:gv('d2b'),ap_aspirin:gc('sap-aspirin'),ap_clopi:gc('sap-clopi'),ap_tica:gc('sap-tica'),ap_ticlo:gc('sap-ticlo'),ap_gp:gc('sap-gp'),ap_contra:gc('sap-contra'),ap_none:gc('sap-none'),ap_other:gc('sap-other'),ap_otherText:gv('sap-other-text'),ac_fondap:gc('sac-fondap'),ac_lmwh:gc('sac-lmwh'),ac_ufh:gc('sac-ufh'),ac_contra:gc('sac-contra'),ac_none:gc('sac-none'),ac_other:gc('sac-other'),ac_otherText:gv('sac-other-text'),statin:gr('stemi-statin'),ace:gr('stemi-ace'),bb:gr('stemi-bb')}
     }:null,
     stroke:formState.deathTypes.stroke?{
+      excTIA:gc('st-exc-tia'),excSOL:gc('st-exc-sol'),excNonAth:gc('st-exc-nonath'),excMimic:gc('st-exc-mimic'),excSAH:gc('st-exc-sah'),
       timing:gr('stroke-timing'),type:gr('stroke-type'),
       onsetType:gr('stroke-onset-type'),onsetDate:gv('stroke-onset-date'),onsetTime:gv('stroke-onset-time'),
       lastSeenDate:gv('stroke-lastseen-date'),lastSeenTime:gv('stroke-lastseen-time'),
@@ -2255,20 +2369,23 @@ function collectAllData(){
     partF:{narrative:gv('narrative'),docAttached:gc('doc-attached'),docNotes:gv('doc-attachment-notes')},
     signatures:sigs,
     hodReview:{comments:gv('hod-comments-display'),improvement:gv('hod-improvement-display'),deathCategory:formState.signatures.hod?.deathCategory||''},
-    committee:{date:gv('committee-date'),decision:gr('committee-decision')},
+    committee:{date:gv('committee-date'),decision:gr('committee-decision'),comments:gv('committee-comments')},
     assessorReview:{
       comments:gv('assessor-comments-display'),deathCategory:formState.signatures.assessor?.deathCategory||'',
-      cf_delayed_present:gc('cf-delayed-present'),cf_delayed_diag:gc('cf-delayed-diag'),cf_inadequate_assess:gc('cf-inadequate-assess'),
-      cf_new_complex:gc('cf-new-complex'),cf_placement:gc('cf-placement'),cf_staffing:gc('cf-staffing'),
-      cf_equipment:gc('cf-equipment'),cf_comm:gc('cf-comm'),cf_human:gc('cf-human'),
-      cf_patient_factors:gc('cf-patient-factors'),cf_no_screening:gc('cf-no-screening'),cf_preop:gc('cf-preop'),
-      cf_noncompliance:gc('cf-noncompliance'),cf_financial:gc('cf-financial'),cf_inv_delay:gc('cf-inv-delay'),
-      cf_bed:gc('cf-bed'),cf_system_delay:gc('cf-system-delay'),cf_monitoring:gc('cf-monitoring'),
-      cf_drug_sel:gc('cf-drug-sel'),cf_drug_dose:gc('cf-drug-dose'),cf_abx_delay:gc('cf-abx-delay'),
-      cf_inadequate_tx:gc('cf-inadequate-tx'),cf_ipc:gc('cf-ipc'),cf_time_critical:gc('cf-time-critical'),
-      cf_delayed_proc:gc('cf-delayed-proc'),cf_transfer_delay:gc('cf-transfer-delay'),cf_anatomy:gc('cf-anatomy'),
-      cf_vascular_access:gc('cf-vascular-access'),cf_proc_compl:gc('cf-proc-compl'),cf_pt_refusal:gc('cf-pt-refusal'),
-      cf_life_threat:gc('cf-life-threat'),cf_other:gv('cf-other-text')
+      rca_gen_equip:gc('rca-gen-equip'),rca_gen_comm:gc('rca-gen-comm'),rca_gen_inv:gc('rca-gen-inv'),
+      rca_gen_bed:gc('rca-gen-bed'),rca_gen_sys:gc('rca-gen-sys'),rca_gen_human:gc('rca-gen-human'),
+      rca_gen_patient:gc('rca-gen-patient'),
+      rca_pre_screen:gc('rca-pre-screen'),rca_pre_opt:gc('rca-pre-opt'),rca_pre_noncomp:gc('rca-pre-noncomp'),
+      rca_pre_fin:gc('rca-pre-fin'),
+      rca_init_delay:gc('rca-init-delay'),rca_init_diag:gc('rca-init-diag'),rca_init_sev:gc('rca-init-sev'),
+      rca_init_new:gc('rca-init-new'),rca_init_place:gc('rca-init-place'),rca_init_staff:gc('rca-init-staff'),
+      rca_tx_time:gc('rca-tx-time'),rca_tx_proc:gc('rca-tx-proc'),rca_tx_transfer:gc('rca-tx-transfer'),
+      rca_tx_anat:gc('rca-tx-anat'),rca_tx_vasc:gc('rca-tx-vasc'),rca_tx_comp:gc('rca-tx-comp'),
+      rca_tx_refuse:gc('rca-tx-refuse'),
+      rca_inp_mon:gc('rca-inp-mon'),rca_inp_drug:gc('rca-inp-drug'),rca_inp_dose:gc('rca-inp-dose'),
+      rca_inp_admin:gc('rca-inp-admin'),rca_inp_tx:gc('rca-inp-tx'),rca_inp_ipc:gc('rca-inp-ipc'),
+      rca_inp_life:gc('rca-inp-life'),
+      rca_other_check:gc('rca-other-check'),rca_other_text:gv('rca-other-text')
     }
   };
 }
@@ -2300,7 +2417,9 @@ function exportAllCSV(){
     'Death Date':bi.deathDate,'Death Time':bi.deathTime,'Place of Death':bi.placeDeath,'Cause of Death':bi.causeDeath,
     'Form Issued Date':bi.formIssuedDate,'Coordinator Initials':bi.coordInitials,
     // PART A
-    'Exclusion Criteria Met':a.exclusionMet,'Source of Referral':a.referralSource,'Admission Via':a.admissionVia,
+    'Inc: Age 25-54': a.incAge?'Yes':'No', 'Inc: Death in 14d': a.inc14d?'Yes':'No', 'Inc: Medical Ward/ED': a.incWard?'Yes':'No', 'Inc: Specific Diagnosis': a.incDx?'Yes':'No',
+    'Exc: Non-Malaysian': a.excNonMy?'Yes':'No', 'Exc: Maternal': a.excMaternal?'Yes':'No', 'Exc: Private Hosp': a.excPrivate?'Yes':'No', 'Exc: Self Harm': a.excHarm?'Yes':'No', 'Exc: Cancer': a.excCancer?'Yes':'No', 'Exc: Active TB': a.excPTB?'Yes':'No', 'Exc: Immunosuppressive': a.excImmuno?'Yes':'No',
+    'Source of Referral':a.referralSource,'Admission Via':a.admissionVia,
     'Direct Admission Hospital':a.directAdmissionHospital,'Transferred from Another MOH Hospital':a.transferred,
     'Previous Hospital Encounter Date':a.prevEncDate,'Previous Hospital Encounter Time':a.prevEncTime,
     'Arrival at Current Hospital Date':a.currArrDate,'Arrival at Current Hospital Time':a.currArrTime,
@@ -2346,9 +2465,11 @@ function exportAllCSV(){
     'NSTEMI: Anti-platelet Aspirin':acs.nstemi?.ap_aspirin?'Yes':'','NSTEMI: Anti-platelet Clopidogrel':acs.nstemi?.ap_clopi?'Yes':'',
     'NSTEMI: Anti-platelet Ticagrelor':acs.nstemi?.ap_tica?'Yes':'','NSTEMI: Anti-platelet Ticlopidine':acs.nstemi?.ap_ticlo?'Yes':'',
     'NSTEMI: Anti-platelet GP Inhibitor':acs.nstemi?.ap_gp?'Yes':'','NSTEMI: Anti-platelet Contraindicated':acs.nstemi?.ap_contra?'Yes':'',
+    'NSTEMI: Anti-platelet None':acs.nstemi?.ap_none?'Yes':'','NSTEMI: Anti-platelet Other':acs.nstemi?.ap_other?'Yes':'','NSTEMI: Anti-platelet Other Text':acs.nstemi?.ap_otherText||'',
     'NSTEMI: Anti-coagulant Fondaparinux':acs.nstemi?.ac_fondap?'Yes':'','NSTEMI: Anti-coagulant LMWH':acs.nstemi?.ac_lmwh?'Yes':'',
-    'NSTEMI: Anti-coagulant UFH':acs.nstemi?.ac_ufh?'Yes':'','NSTEMI: Statin':acs.nstemi?.statin||'',
-    'NSTEMI: ACE-I/ARB':acs.nstemi?.ace||'','NSTEMI: Beta Blocker':acs.nstemi?.bb||'',
+    'NSTEMI: Anti-coagulant UFH':acs.nstemi?.ac_ufh?'Yes':'','NSTEMI: Anti-coagulant Contraindicated':acs.nstemi?.ac_contra?'Yes':'',
+    'NSTEMI: Anti-coagulant None':acs.nstemi?.ac_none?'Yes':'','NSTEMI: Anti-coagulant Other':acs.nstemi?.ac_other?'Yes':'','NSTEMI: Anti-coagulant Other Text':acs.nstemi?.ac_otherText||'',
+    'NSTEMI: Statin':acs.nstemi?.statin||'','NSTEMI: ACE-I/ARB':acs.nstemi?.ace||'','NSTEMI: Beta Blocker':acs.nstemi?.bb||'',
     'NSTEMI: Cardiac Catheterisation':acs.nstemi?.cath||'','NSTEMI: PCI':acs.nstemi?.pci||'',
     'STEMI: Killip Class':acs.stemi?.killip||'','STEMI: Fibrinolytic Given':acs.stemi?.fibrinGiven||'',
     'STEMI: Fibrinolytic Type':acs.stemi?.fibrinType||'','STEMI: Door to Needle (mins)':acs.stemi?.d2n||'',
@@ -2357,9 +2478,15 @@ function exportAllCSV(){
     'STEMI: No Fibrinolytic - Not Consented':acs.stemi?.fn_consent?'Yes':'',
     'STEMI: Cardiac Catheterisation':acs.stemi?.cath||'','STEMI: PCI Type':acs.stemi?.pci||'','STEMI: Door to Balloon (mins)':acs.stemi?.d2b||'',
     'STEMI: Anti-platelet Aspirin':acs.stemi?.ap_aspirin?'Yes':'','STEMI: Anti-platelet Clopidogrel':acs.stemi?.ap_clopi?'Yes':'',
-    'STEMI: Anti-platelet Ticagrelor':acs.stemi?.ap_tica?'Yes':'','STEMI: Anti-coagulant LMWH':acs.stemi?.ac_lmwh?'Yes':'',
+    'STEMI: Anti-platelet Ticagrelor':acs.stemi?.ap_tica?'Yes':'','STEMI: Anti-platelet Ticlopidine':acs.stemi?.ap_ticlo?'Yes':'',
+    'STEMI: Anti-platelet GP Inhibitor':acs.stemi?.ap_gp?'Yes':'','STEMI: Anti-platelet Contraindicated':acs.stemi?.ap_contra?'Yes':'',
+    'STEMI: Anti-platelet None':acs.stemi?.ap_none?'Yes':'','STEMI: Anti-platelet Other':acs.stemi?.ap_other?'Yes':'','STEMI: Anti-platelet Other Text':acs.stemi?.ap_otherText||'',
+    'STEMI: Anti-coagulant Fondaparinux':acs.stemi?.ac_fondap?'Yes':'','STEMI: Anti-coagulant LMWH':acs.stemi?.ac_lmwh?'Yes':'',
+    'STEMI: Anti-coagulant UFH':acs.stemi?.ac_ufh?'Yes':'','STEMI: Anti-coagulant Contraindicated':acs.stemi?.ac_contra?'Yes':'',
+    'STEMI: Anti-coagulant None':acs.stemi?.ac_none?'Yes':'','STEMI: Anti-coagulant Other':acs.stemi?.ac_other?'Yes':'','STEMI: Anti-coagulant Other Text':acs.stemi?.ac_otherText||'',
     'STEMI: Statin':acs.stemi?.statin||'','STEMI: ACE-I/ARB':acs.stemi?.ace||'','STEMI: Beta Blocker':acs.stemi?.bb||'',
     // STROKE
+    'Stroke Exc: TIA':st.excTIA?'Yes':'','Stroke Exc: SOL':st.excSOL?'Yes':'','Stroke Exc: Non-Atherosclerotic':st.excNonAth?'Yes':'','Stroke Exc: Mimic':st.excMimic?'Yes':'','Stroke Exc: SAH/SDH':st.excSAH?'Yes':'',
     'Stroke: Timing':st.timing||'','Stroke: Type':st.type||'',
     'Stroke: Onset Type':st.onsetType||'','Stroke: Onset Date':st.onsetDate||'','Stroke: Onset Time':st.onsetTime||'',
     'Stroke: Last Seen Well Date':st.lastSeenDate||'','Stroke: Last Seen Well Time':st.lastSeenTime||'',
@@ -2414,25 +2541,42 @@ function exportAllCSV(){
     'Coordinator Name':dec(d.signatures?.coord?.name),'Coordinator Sign Date/Time':d.signatures?.coord?.datetime||'',
     'MO/Specialist Name':dec(d.signatures?.mo?.name),'MO Designation':dec(d.signatures?.mo?.designation),'MO Sign Date/Time':d.signatures?.mo?.datetime||'','MO Death Category':d.signatures?.mo?.deathCategory||'',
     'HOD Name':dec(d.signatures?.hod?.name),'HOD Sign Date/Time':d.signatures?.hod?.datetime||'','HOD Death Category':hod.deathCategory,'HOD Comments':hod.comments,'HOD Suggestion for Improvement':hod.improvement,
-    'Committee Decision Date':com.date,'Committee Decision':com.decision,
+    'Committee Decision Date':com.date,'Committee Decision':com.decision,'Committee Comments':com.comments,
     'Assessor Name':d.signatures?.assessor?.name||'','Assessor Sign Date/Time':d.signatures?.assessor?.datetime||'','Assessor Death Category':ass.deathCategory,'Assessor Comments':ass.comments,
-    // CONTRIBUTING FACTORS
-    'CF: Delayed Patient Presentation':ass.cf_delayed_present?'Yes':'No','CF: Delayed/Inaccurate Diagnosis':ass.cf_delayed_diag?'Yes':'No',
-    'CF: Inadequate Severity Assessment':ass.cf_inadequate_assess?'Yes':'No','CF: Newly Diagnosed Complex Condition':ass.cf_new_complex?'Yes':'No',
-    'CF: Inappropriate Placement':ass.cf_placement?'Yes':'No','CF: Inadequate Staffing':ass.cf_staffing?'Yes':'No',
-    'CF: Equipment Unavailability':ass.cf_equipment?'Yes':'No','CF: Communication Breakdown':ass.cf_comm?'Yes':'No',
-    'CF: Human Factors':ass.cf_human?'Yes':'No','CF: Patient-Related Factors':ass.cf_patient_factors?'Yes':'No',
-    'CF: Lack of Screening':ass.cf_no_screening?'Yes':'No','CF: Inadequate Pre-op Optimisation':ass.cf_preop?'Yes':'No',
-    'CF: Patient Non-Compliance':ass.cf_noncompliance?'Yes':'No','CF: Financial Constraints':ass.cf_financial?'Yes':'No',
-    'CF: Investigation Delay':ass.cf_inv_delay?'Yes':'No','CF: Bed Shortage':ass.cf_bed?'Yes':'No',
-    'CF: System/Process Delays':ass.cf_system_delay?'Yes':'No','CF: Inadequate Monitoring':ass.cf_monitoring?'Yes':'No',
-    'CF: Inappropriate Drug Selection':ass.cf_drug_sel?'Yes':'No','CF: Inappropriate Drug Dosage':ass.cf_drug_dose?'Yes':'No',
-    'CF: Delay in Critical Medications':ass.cf_abx_delay?'Yes':'No','CF: Inadequate Treatment of Conditions':ass.cf_inadequate_tx?'Yes':'No',
-    'CF: IPC Non-Compliance':ass.cf_ipc?'Yes':'No','CF: Delay in Time-Critical Therapies':ass.cf_time_critical?'Yes':'No',
-    'CF: Delayed/Omitted Inpatient Procedures':ass.cf_delayed_proc?'Yes':'No','CF: Inter-Facility Transfer Delay':ass.cf_transfer_delay?'Yes':'No',
-    'CF: Anatomical Challenges':ass.cf_anatomy?'Yes':'No','CF: Vascular Access Problems':ass.cf_vascular_access?'Yes':'No',
-    'CF: Procedural Complications':ass.cf_proc_compl?'Yes':'No','CF: Patient/Family Refusal':ass.cf_pt_refusal?'Yes':'No',
-    'CF: Life-Threatening Complications':ass.cf_life_threat?'Yes':'No','CF: Other Factors':ass.cf_other||''
+    // CONTRIBUTING FACTORS (RCA TABLE)
+    'RCA Gen: Equipment':ass.rca_gen_equip?'Yes':'No',
+    'RCA Gen: Communication':ass.rca_gen_comm?'Yes':'No',
+    'RCA Gen: Inv Delays':ass.rca_gen_inv?'Yes':'No',
+    'RCA Gen: Bed Shortages':ass.rca_gen_bed?'Yes':'No',
+    'RCA Gen: System Delays':ass.rca_gen_sys?'Yes':'No',
+    'RCA Gen: Human Factors':ass.rca_gen_human?'Yes':'No',
+    'RCA Gen: Patient Factors':ass.rca_gen_patient?'Yes':'No',
+    'RCA Pre: Lack Screening':ass.rca_pre_screen?'Yes':'No',
+    'RCA Pre: Inadequate Optimisation':ass.rca_pre_opt?'Yes':'No',
+    'RCA Pre: Non-Compliance':ass.rca_pre_noncomp?'Yes':'No',
+    'RCA Pre: Financial':ass.rca_pre_fin?'Yes':'No',
+    'RCA Init: Delayed Presentation':ass.rca_init_delay?'Yes':'No',
+    'RCA Init: Delayed/Inaccurate Diagnosis':ass.rca_init_diag?'Yes':'No',
+    'RCA Init: Inadequate Severity Assessment':ass.rca_init_sev?'Yes':'No',
+    'RCA Init: Newly Diagnosed Complex Condition':ass.rca_init_new?'Yes':'No',
+    'RCA Init: Inappropriate Placement':ass.rca_init_place?'Yes':'No',
+    'RCA Init: Inadequate Staffing':ass.rca_init_staff?'Yes':'No',
+    'RCA Tx: Delay Time-Critical Therapies':ass.rca_tx_time?'Yes':'No',
+    'RCA Tx: Delayed/Omitted Procedures':ass.rca_tx_proc?'Yes':'No',
+    'RCA Tx: Delay Inter-Facility Transfer':ass.rca_tx_transfer?'Yes':'No',
+    'RCA Tx: Anatomical Challenges':ass.rca_tx_anat?'Yes':'No',
+    'RCA Tx: Vascular Access':ass.rca_tx_vasc?'Yes':'No',
+    'RCA Tx: Procedural Complications':ass.rca_tx_comp?'Yes':'No',
+    'RCA Tx: Refusal of Intervention':ass.rca_tx_refuse?'Yes':'No',
+    'RCA Inp: Inadequate Monitoring':ass.rca_inp_mon?'Yes':'No',
+    'RCA Inp: Inappropriate Drug Selection':ass.rca_inp_drug?'Yes':'No',
+    'RCA Inp: Inappropriate Drug Dosage':ass.rca_inp_dose?'Yes':'No',
+    'RCA Inp: Delay Critical Medications':ass.rca_inp_admin?'Yes':'No',
+    'RCA Inp: Inadequate Treatment':ass.rca_inp_tx?'Yes':'No',
+    'RCA Inp: IPC Non-Compliance':ass.rca_inp_ipc?'Yes':'No',
+    'RCA Inp: Life-Threatening Complications':ass.rca_inp_life?'Yes':'No',
+    'RCA Other: Checked':ass.rca_other_check?'Yes':'No',
+    'RCA Other: Specify':ass.rca_other_text||''
   };
 
   const headers=Object.keys(row).map(h=>`"${h.replace(/"/g,'""')}"`).join(',');
@@ -2469,14 +2613,16 @@ function loadFormFile(event){
   };reader.readAsText(file);
 }
 
+
 function resetFormUI() {
   // 1. Wipe all inputs clean to prevent data bleeding
   document.querySelectorAll('#main-content input, #main-content textarea, #main-content select').forEach(el => {
     if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
     else el.value = '';
   });
-  document.getElementById('gcs-total').textContent = '15';
-  ['gcs-e-val', 'gcs-v-val', 'gcs-m-val'].forEach((id, i) => { const el=document.getElementById(id); if(el) el.textContent = [4, 5, 6][i]; });
+  document.getElementById('gcs-total').textContent = '0';
+  ['gcs-e', 'gcs-v', 'gcs-m'].forEach(id => { const el=document.getElementById(id); if(el) el.value = 0; });
+  const tCheck = document.getElementById('gcs-t'); if(tCheck) tCheck.checked = false;
   if (document.getElementById('timi-total')) document.getElementById('timi-total').textContent = '0';
   if (document.getElementById('sign-code-preview')) document.getElementById('sign-code-preview').textContent = '—';
   if (document.getElementById('display-case-code')) document.getElementById('display-case-code').textContent = '—';
@@ -2536,7 +2682,6 @@ function restoreForm(data){
   const dec = (val) => { try { return (val && typeof val === 'string' && val.startsWith('B64:')) ? decodeURIComponent(escape(atob(val.substring(4)))) : val; } catch(e) { return val; } };
 
   resetFormUI();
-
   formState.stage=data.meta?.stage||0;formState.caseCode=data.meta?.caseCode||'';
   formState.deathTypes=data.meta?.deathTypes||{acs:false,stroke:false,ckd:false,pneumo:false};
   formState.anonymised=data.meta?.anonymised||false;
@@ -2585,7 +2730,9 @@ function restoreForm(data){
   s('form-issued-date',bi.formIssuedDate);s('form-coord-initials',bi.coordInitials);
 
   // Part A
-  if(a.exclusionMet)sr('exclusion-met',a.exclusionMet);if(a.referralSource)sr('referral-source',a.referralSource);
+  sc('inc-age',a.incAge);sc('inc-14d',a.inc14d);sc('inc-ward',a.incWard);sc('inc-dx',a.incDx);
+  sc('exc-non-my',a.excNonMy);sc('exc-maternal',a.excMaternal);sc('exc-private',a.excPrivate);sc('exc-harm',a.excHarm);sc('exc-cancer',a.excCancer);sc('exc-ptb',a.excPTB);sc('exc-immuno',a.excImmuno);
+  if(a.referralSource)sr('referral-source',a.referralSource);
   s('admission-via',a.admissionVia);s('direct-admission-hospital',a.directAdmissionHospital);
   if(a.transferred)sr('transferred',a.transferred);if(a.prevHosp)sr('prev-hosp',a.prevHosp);if(a.prevHospCount)sr('prev-hosp-count',a.prevHospCount);
   s('prev-enc-date', a.prevEncDate); s('prev-enc-time', a.prevEncTime);
@@ -2600,11 +2747,11 @@ function restoreForm(data){
   
   // Vitals
   s('sbp',v.sbp);s('dbp',v.dbp);s('pr',v.pr);s('bg',v.bg);s('rr',v.rr);s('temp',v.temp);s('spo2',v.spo2);
-  if(v.gcsE){s('gcs-e',v.gcsE);s('gcs-v',v.gcsV);s('gcs-m',v.gcsM);updateGCS();}
+  if(v.gcsE !== undefined){s('gcs-e',v.gcsE);s('gcs-v',v.gcsV);s('gcs-m',v.gcsM);sc('gcs-t',v.gcsT);updateGCS();}
   if(v.imAssessed)sr('im-assessed',v.imAssessed);s('im-assess-date',v.imAssessDate);s('im-assess-time',v.imAssessTime);
   if(v.icuManaged)sr('icu-managed',v.icuManaged);if(v.ventilated)sr('ventilated',v.ventilated);
   
-  // Investigations
+// Investigations
   s('inv-hb',inv.hb);s('inv-wbc',inv.wbc);s('inv-plt',inv.plt);s('inv-urea',inv.urea);s('inv-creat',inv.creat);s('inv-k',inv.k);s('inv-hco3',inv.hco3);s('inv-egfr',inv.egfr);s('inv-ldl',inv.ldl);
   
   // Narrative
@@ -2612,7 +2759,9 @@ function restoreForm(data){
   s('case-code',formState.caseCode);document.getElementById('display-case-code').textContent=formState.caseCode||'—';
   s('hod-comments-display',data.hodReview?.comments);
   s('hod-improvement-display',data.hodReview?.improvement);
-  s('committee-date',data.committee?.date);if(data.committee?.decision)sr('committee-decision',data.committee.decision);
+  s('committee-date',data.committee?.date);
+  if(data.committee?.decision)sr('committee-decision',data.committee.decision);
+  s('committee-comments', data.committee?.comments);
   s('assessor-comments-display',data.assessorReview?.comments);
 
   // ACS
@@ -2623,18 +2772,23 @@ function restoreForm(data){
   sr('ccu-admit', acs.ccuAdmit); sr('ccu-no-reason', acs.ccuNoReason);
   if (acs.nstemi) {
     sc('nap-aspirin', acs.nstemi.ap_aspirin); sc('nap-clopi', acs.nstemi.ap_clopi);
+    sc('nap-tica', acs.nstemi.ap_tica); sc('nap-ticlo', acs.nstemi.ap_ticlo); sc('nap-gp', acs.nstemi.ap_gp); sc('nap-contra', acs.nstemi.ap_contra); sc('nap-none', acs.nstemi.ap_none); sc('nap-other', acs.nstemi.ap_other); s('nap-other-text', acs.nstemi.ap_otherText);
+    sc('nac-fondap', acs.nstemi.ac_fondap); sc('nac-lmwh', acs.nstemi.ac_lmwh); sc('nac-ufh', acs.nstemi.ac_ufh); sc('nac-contra', acs.nstemi.ac_contra); sc('nac-none', acs.nstemi.ac_none); sc('nac-other', acs.nstemi.ac_other); s('nac-other-text', acs.nstemi.ac_otherText);
     sr('nstemi-statin', acs.nstemi.statin); sr('nstemi-ace', acs.nstemi.ace); sr('nstemi-bb', acs.nstemi.bb);
     sr('nstemi-cath', acs.nstemi.cath); sr('nstemi-pci', acs.nstemi.pci);
   }
   if (acs.stemi) {
     sr('killip', acs.stemi.killip); sr('fibrin-given', acs.stemi.fibrinGiven);
     s('fibrin-type', acs.stemi.fibrinType); s('d2n', acs.stemi.d2n);
+    sc('sap-aspirin', acs.stemi.ap_aspirin); sc('sap-clopi', acs.stemi.ap_clopi); sc('sap-tica', acs.stemi.ap_tica); sc('sap-ticlo', acs.stemi.ap_ticlo); sc('sap-gp', acs.stemi.ap_gp); sc('sap-contra', acs.stemi.ap_contra); sc('sap-none', acs.stemi.ap_none); sc('sap-other', acs.stemi.ap_other); s('sap-other-text', acs.stemi.ap_otherText);
+    sc('sac-fondap', acs.stemi.ac_fondap); sc('sac-lmwh', acs.stemi.ac_lmwh); sc('sac-ufh', acs.stemi.ac_ufh); sc('sac-contra', acs.stemi.ac_contra); sc('sac-none', acs.stemi.ac_none); sc('sac-other', acs.stemi.ac_other); s('sac-other-text', acs.stemi.ac_otherText);
     sr('stemi-cath', acs.stemi.cath); sr('stemi-pci', acs.stemi.pci); s('d2b', acs.stemi.d2b);
     sr('stemi-statin', acs.stemi.statin); sr('stemi-ace', acs.stemi.ace); sr('stemi-bb', acs.stemi.bb);
   }
 
   // Stroke
   const st = data.stroke || {};
+  sc('st-exc-tia', st.excTIA); sc('st-exc-sol', st.excSOL); sc('st-exc-nonath', st.excNonAth); sc('st-exc-mimic', st.excMimic); sc('st-exc-sah', st.excSAH);
   sr('stroke-timing', st.timing); sr('stroke-type', st.type);
   sr('stroke-onset-type', st.onsetType); s('stroke-onset-date', st.onsetDate); s('stroke-onset-time', st.onsetTime);
   s('stroke-lastseen-date', st.lastSeenDate); s('stroke-lastseen-time', st.lastSeenTime);
@@ -2664,10 +2818,22 @@ function restoreForm(data){
   sr('rdt', pn.rdt); sr('flu-test', pn.fluTest); sr('covid-test', pn.covidTest);
   sr('abx-given', pn.abxGiven); sr('abx-1h', pn.abxWithin1h);
   
-  // Assessor Checkboxes
+  // NEW Assessor RCA Table Checkboxes
   const ass = data.assessorReview || {};
-  sc('cf-delayed-present', ass.cf_delayed_present); sc('cf-delayed-diag', ass.cf_delayed_diag);
-  sc('cf-inadequate-assess', ass.cf_inadequate_assess); sc('cf-monitoring', ass.cf_monitoring);
+  sc('rca-gen-equip', ass.rca_gen_equip); sc('rca-gen-comm', ass.rca_gen_comm); sc('rca-gen-inv', ass.rca_gen_inv);
+  sc('rca-gen-bed', ass.rca_gen_bed); sc('rca-gen-sys', ass.rca_gen_sys); sc('rca-gen-human', ass.rca_gen_human);
+  sc('rca-gen-patient', ass.rca_gen_patient);
+  sc('rca-pre-screen', ass.rca_pre_screen); sc('rca-pre-opt', ass.rca_pre_opt); sc('rca-pre-noncomp', ass.rca_pre_noncomp);
+  sc('rca-pre-fin', ass.rca_pre_fin);
+  sc('rca-init-delay', ass.rca_init_delay); sc('rca-init-diag', ass.rca_init_diag); sc('rca-init-sev', ass.rca_init_sev);
+  sc('rca-init-new', ass.rca_init_new); sc('rca-init-place', ass.rca_init_place); sc('rca-init-staff', ass.rca_init_staff);
+  sc('rca-tx-time', ass.rca_tx_time); sc('rca-tx-proc', ass.rca_tx_proc); sc('rca-tx-transfer', ass.rca_tx_transfer);
+  sc('rca-tx-anat', ass.rca_tx_anat); sc('rca-tx-vasc', ass.rca_tx_vasc); sc('rca-tx-comp', ass.rca_tx_comp);
+  sc('rca-tx-refuse', ass.rca_tx_refuse);
+  sc('rca-inp-mon', ass.rca_inp_mon); sc('rca-inp-drug', ass.rca_inp_drug); sc('rca-inp-dose', ass.rca_inp_dose);
+  sc('rca-inp-admin', ass.rca_inp_admin); sc('rca-inp-tx', ass.rca_inp_tx); sc('rca-inp-ipc', ass.rca_inp_ipc);
+  sc('rca-inp-life', ass.rca_inp_life);
+  sc('rca-other-check', ass.rca_other_check); s('rca-other-text', ass.rca_other_text);
 
   // Stage restoration
   if(formState.stage>=1){
@@ -2684,6 +2850,7 @@ function restoreForm(data){
     lockSection('respondent-form-card');lockSection('basic-form-card');lockSection('inclusion-form-card');
     document.getElementById('section-clinical').style.display='block';document.getElementById('section-hod').style.display='block';
     showDiseaseParts();advanceProgress(1);
+    updateStageDisplay('STAGE 2: MO/Specialist Clinical Entry','Fill clinical details for the relevant disease sections, then sign.');
   }
   if(formState.stage>=2){
     const sig=formState.signatures.mo||{};
@@ -2696,8 +2863,11 @@ function restoreForm(data){
       if(sig.sigData){ document.getElementById('mo-sig-img').src=sig.sigData; document.getElementById('mo-sig-img').style.display='block'; }
     }
     document.getElementById('mo-sig-display').style.display='block';document.getElementById('mo-sign-section').style.display='none';
-    document.getElementById('section-clinical').querySelectorAll('input,select,textarea').forEach(el=>el.disabled=true);
+    
+    lockSection('section-clinical'); // Upgraded load lock
+    
     advanceProgress(2);
+    updateStageDisplay('STAGE 3: Awaiting HOD Signature','The Head of Department must now review and sign.');
   }
   if(formState.stage>=3){
     const sig=formState.signatures.hod||{};
@@ -2711,14 +2881,32 @@ function restoreForm(data){
     }
     document.getElementById('hod-sig-display').style.display='block';document.getElementById('hod-sign-btn').style.display='none';
     document.getElementById('section-committee').style.display='block';advanceProgress(3);
+    updateStageDisplay('STAGE 4: Committee Review','Form locked. Send to NIMMR Committee for anonymisation.');
   }
-  if(formState.stage>=4){document.getElementById('section-assessor').style.display='block';document.getElementById('committee-btn').style.display='none';advanceProgress(4);}
+  if(formState.stage>=4){
+    document.getElementById('section-assessor').style.display='block';document.getElementById('committee-btn').style.display='none';advanceProgress(4);
+    updateStageDisplay('STAGE 5: Assessor Review','Form anonymised. Assessor may now review and sign.');
+  }
   if(formState.stage>=5){
     const sig=formState.signatures.assessor||{};
     document.getElementById('assessor-sig-info').textContent=`Assessor: ${sig.name||''} | ${sig.datetime||''}`;
     if(sig.sigData){ document.getElementById('assessor-sig-img').src=sig.sigData; document.getElementById('assessor-sig-img').style.display='block'; }
     document.getElementById('assessor-sig-display').style.display='block';document.getElementById('assessor-sign-btn').style.display='none';
-    document.getElementById('section-final').style.display='block';advanceProgress(5);advanceProgress(6);
+    
+    // NEW: Open Committee Final card instead of section-final
+    lockSection('assessor-form-card');
+    document.getElementById('section-committee-final').style.display='block';
+    
+    advanceProgress(5);
+    updateStageDisplay('STAGE 6: Committee Final Decision','Assessor review complete. Committee to finalise form.');
+  }
+  if(formState.stage>=6){
+    lockSection('committee-final-card');
+    document.getElementById('committee-final-btn').style.display='none';
+    document.getElementById('section-final').style.display='block';
+    
+    advanceProgress(6);
+    updateStageDisplay('STAGE 6: FINALISED','All signatures complete. Form is finalised.');
   }
   markSaved();
 }
