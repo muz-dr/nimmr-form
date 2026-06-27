@@ -437,7 +437,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-header-emblem"><?xml version="1.0" encoding="UTF-8"?><svg viewBox="0 0 500 500" xmlns=http://www.w3.org/2000/svg><defs><linearGradient id=c y2=100%><stop offset=0 stop-color=#0a192f /><stop offset=1 stop-color=#0f3156 /></linearGradient><linearGradient id=b y2=100%><stop offset=0 stop-color=#ff2a4b /><stop offset=.6 stop-color=#d90429 /><stop offset=1 stop-color=#b3001b /></linearGradient><filter height=140% id=a width=140% x=-20% y=-20%><feGaussianBlur result=blur stdDeviation=6 /><feComposite in=SourceGraphic in2=blur /></filter></defs><rect fill=url(#c) height=500 width=500 /><rect fill=none height=460 width=460 rx=24 stroke=#fff stroke-opacity=.05 stroke-width=2 x=20 y=20 /><g transform="translate(20 -5)"><path d="m60 215h25l15-45 15 80 20-125 20 160 20-100 15 45 15-15h70c30 0 70 40 100 70 60-70 100-140 50-200-40-50-90 0-90 0s-40-40-80-10c-30 23-33 60-10 77" fill=none filter=url(#a) stroke=url(#b) stroke-linecap=round stroke-width=15 /><circle cx=245 cy=152 fill=url(#b) r=14 filter=url(#a) /><circle cx=245 cy=152 fill=#fff r=6 opacity=.9 /></g><g transform="translate(250 375)" text-anchor=middle><text fill=#ffffff font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size=62 font-weight=800 letter-spacing=14>NIMMR</text><line opacity=.6 stroke=#ff2a4b stroke-width=2 x1=-95 x2=110 y1=16 y2=16 /><text fill=#ffffff font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size=10.5 font-weight=600 letter-spacing=6.5 opacity=.7 x=4 y=38>MINISTRY OF HEALTH MALAYSIA</text></g></svg></div>
     <div class="form-header-text">
       <h1>NATIONAL INTERNAL MEDICINE MORTALITY REVIEW (NIMMR)</h1>
-      <p>Ministry of Health Malaysia &nbsp;•&nbsp; Medical Development Division &nbsp;•&nbsp; STRICTLY CONFIDENTIAL</p>
+      <p>Ministry of Health Malaysia &nbsp;•&nbsp; Internal Medicine Division &nbsp;•&nbsp; STRICTLY CONFIDENTIAL</p>
       <div class="form-header-meta">
         <span>Case Code: <strong id="display-case-code">—</strong></span>
         <span>Stage: <strong id="display-stage">Coordinator Entry</strong></span>
@@ -1788,6 +1788,12 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 const _mk = atob('b3Blbi1yZXBvcnQtbm93IQ==');
 const _ck = atob('MTIz');
 
+// ── OFFLINE AES-GCM ENCRYPTION ENGINE ──
+const _cryptoSecret = atob('b3Blbi1yZXBvcnQtbm93IQ==');
+async function getCryptoKey() { const enc = new TextEncoder(); const keyMaterial = await crypto.subtle.digest('SHA-256', enc.encode(_cryptoSecret)); return await crypto.subtle.importKey('raw', keyMaterial, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']); }
+async function encryptNIMMR(jsonString) { const key = await getCryptoKey(); const iv = crypto.getRandomValues(new Uint8Array(12)); const encoded = new TextEncoder().encode(jsonString); const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, encoded); const combined = new Uint8Array(iv.length + encrypted.byteLength); combined.set(iv, 0); combined.set(new Uint8Array(encrypted), iv.length); let bin = ''; for (let i = 0; i < combined.byteLength; i++) bin += String.fromCharCode(combined[i]); return btoa(bin); }
+async function decryptNIMMR(b64String) { const key = await getCryptoKey(); const bin = atob(b64String); const combined = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) combined[i] = bin.charCodeAt(i); const iv = combined.slice(0, 12); const data = combined.slice(12); const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, data); return new TextDecoder().decode(decrypted); }
+
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
@@ -2640,10 +2646,14 @@ function exportAllCSV(){
 }
 
 // ── SAVE / LOAD ──
-function saveFormJSON(){
+async function saveFormJSON(){
   const data=collectAllData();
   const json=JSON.stringify({__nimmr:true,version:1,...data});
-  const blob=new Blob([json],{type:'application/json'});
+  
+  // ENCRYPT BEFORE SAVING
+  const encryptedString = await encryptNIMMR(json);
+  
+  const blob=new Blob([encryptedString],{type:'application/octet-stream'});
   const url=URL.createObjectURL(blob);
   const linkAnchor=document.createElement('a');linkAnchor.href=url;linkAnchor.download=(formState.caseCode||'NIMMR_DRAFT')+'.nimmr';linkAnchor.click();
   URL.revokeObjectURL(url);markSaved();
@@ -2651,16 +2661,24 @@ function saveFormJSON(){
 function loadFormFile(event){
   const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=e=>{
+  reader.onload=async e=>{
     try{
-      const data=JSON.parse(e.target.result);
+      let rawText = e.target.result.trim();
+      let jsonString = rawText;
+      
+      // If it doesn't look like JSON, attempt decryption
+      if (!rawText.startsWith('{')) {
+        jsonString = await decryptNIMMR(rawText);
+      }
+      
+      const data=JSON.parse(jsonString);
       if(!data.__nimmr){alert('Invalid NIMMR file.');return;}
       restoreForm(data);
       closeModal('load-modal');
       document.getElementById('startup-modal').classList.remove('open');
       document.getElementById('main-content').style.display='block';
       filterHospitals();updateGCS();updateDateTime();setInterval(updateDateTime,1000);
-    }catch(err){alert('Failed to load: '+err.message);}
+    }catch(err){alert('Failed to load file. It may be corrupted, tampered with, or invalid.');}
   };reader.readAsText(file);
 }
 
