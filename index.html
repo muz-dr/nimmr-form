@@ -203,7 +203,19 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 .rca-table input[type="checkbox"] { transform: scale(1.1); cursor: pointer; accent-color: var(--accent-light); }
 
 @media(max-width:600px){.form-row{flex-direction:column;}.death-type-grid{grid-template-columns:1fr;}.timi-grid{grid-template-columns:1fr;}.form-header{flex-direction:column;}.topbar{padding:.5rem .75rem;}}
-@media print{.topbar,.modal-overlay{display:none!important;}body{background:#fff;color:#000;}.form-card{border:1px solid #ccc;}}
+/*@media print{.topbar,.modal-overlay{display:none!important;}body{background:#fff;color:#000;}.form-card{border:1px solid #ccc;}} 
+/* PRINT */
+  @media print { 
+    .topbar, .modal-overlay, .btn { display: none !important; } 
+    body { background: #fff; color: #000; } 
+    .form-card { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; } 
+    
+    /* 🖨️ FIX: Force the printer to render the SVG checkmark and blue background */
+    input[type="checkbox"], input[type="radio"] {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -264,6 +276,20 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('unlock-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="attemptUnlock()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- RELOCK MODAL -->
+<div class="modal-overlay" id="relock-modal">
+  <div class="modal" style="max-width:400px;">
+    <h3>🔒 Re-Lock Section</h3>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem;">Enter your password to re-lock this section.</p>
+    <div class="form-group"><label>Password</label><input type="password" id="relock-password" placeholder="Enter password..."></div>
+    <div id="relock-error" style="color:var(--danger-light);font-size:.78rem;display:none;margin-top:.5rem;">❌ Incorrect password.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('relock-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="attemptRelock()">Re-Lock</button>
     </div>
   </div>
 </div>
@@ -411,7 +437,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-header-emblem"><?xml version="1.0" encoding="UTF-8"?><svg viewBox="0 0 500 500" xmlns=http://www.w3.org/2000/svg><defs><linearGradient id=c y2=100%><stop offset=0 stop-color=#0a192f /><stop offset=1 stop-color=#0f3156 /></linearGradient><linearGradient id=b y2=100%><stop offset=0 stop-color=#ff2a4b /><stop offset=.6 stop-color=#d90429 /><stop offset=1 stop-color=#b3001b /></linearGradient><filter height=140% id=a width=140% x=-20% y=-20%><feGaussianBlur result=blur stdDeviation=6 /><feComposite in=SourceGraphic in2=blur /></filter></defs><rect fill=url(#c) height=500 width=500 /><rect fill=none height=460 width=460 rx=24 stroke=#fff stroke-opacity=.05 stroke-width=2 x=20 y=20 /><g transform="translate(20 -5)"><path d="m60 215h25l15-45 15 80 20-125 20 160 20-100 15 45 15-15h70c30 0 70 40 100 70 60-70 100-140 50-200-40-50-90 0-90 0s-40-40-80-10c-30 23-33 60-10 77" fill=none filter=url(#a) stroke=url(#b) stroke-linecap=round stroke-width=15 /><circle cx=245 cy=152 fill=url(#b) r=14 filter=url(#a) /><circle cx=245 cy=152 fill=#fff r=6 opacity=.9 /></g><g transform="translate(250 375)" text-anchor=middle><text fill=#ffffff font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size=62 font-weight=800 letter-spacing=14>NIMMR</text><line opacity=.6 stroke=#ff2a4b stroke-width=2 x1=-95 x2=110 y1=16 y2=16 /><text fill=#ffffff font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size=10.5 font-weight=600 letter-spacing=6.5 opacity=.7 x=4 y=38>MINISTRY OF HEALTH MALAYSIA</text></g></svg></div>
     <div class="form-header-text">
       <h1>NATIONAL INTERNAL MEDICINE MORTALITY REVIEW (NIMMR)</h1>
-      <p>Ministry of Health Malaysia &nbsp;•&nbsp; Internal Medicine Division &nbsp;•&nbsp; STRICTLY CONFIDENTIAL</p>
+      <p>Ministry of Health Malaysia &nbsp;•&nbsp; Medical Development Division &nbsp;•&nbsp; STRICTLY CONFIDENTIAL</p>
       <div class="form-header-meta">
         <span>Case Code: <strong id="display-case-code">—</strong></span>
         <span>Stage: <strong id="display-stage">Coordinator Entry</strong></span>
@@ -667,7 +693,8 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
           <span style="color:var(--success);font-size:1rem;">✅</span>
           <div><div style="font-size:.8rem;font-weight:700;color:var(--success);">Signed by Coordinator</div><div class="sig-info-badge" id="coord-sig-info"></div></div>
           <img id="coord-sig-img" style="max-width:180px;border:1px solid var(--border);border-radius:4px;background:#fff;" alt="Coordinator signature">
-          <button class="btn btn-sm" onclick="openModal('unlock-modal')">🔓 Unlock</button>
+          <button class="btn btn-sm" id="btn-unlock-coord" onclick="openModal('unlock-modal')">🔓 Unlock</button>
+          <button class="btn btn-sm btn-primary" id="btn-relock-coord" style="display:none;" onclick="openModal('relock-modal')">🔒 Re-Lock</button>
         </div>
       </div>
     </div>
@@ -2086,7 +2113,31 @@ function attemptUnlock(){
     unlockSection('respondent-form-card');
     unlockSection('basic-form-card');
     unlockSection('inclusion-form-card');
+    
+    const btnU = document.getElementById('btn-unlock-coord');
+    const btnR = document.getElementById('btn-relock-coord');
+    if(btnU) btnU.style.display = 'none';
+    if(btnR) btnR.style.display = 'inline-block';
+    
     closeModal('unlock-modal');
+  }else{err.style.display='block';}
+}
+
+function attemptRelock(){
+  const pwd=document.getElementById('relock-password').value;
+  const err=document.getElementById('relock-error');
+  if(pwd===formState.coordPassword||pwd===_mk){
+    err.style.display='none';document.getElementById('relock-password').value='';
+    lockSection('respondent-form-card');
+    lockSection('basic-form-card');
+    lockSection('inclusion-form-card');
+    
+    const btnU = document.getElementById('btn-unlock-coord');
+    const btnR = document.getElementById('btn-relock-coord');
+    if(btnR) btnR.style.display = 'none';
+    if(btnU) btnU.style.display = 'inline-block';
+    
+    closeModal('relock-modal');
   }else{err.style.display='block';}
 }
 
@@ -2848,6 +2899,12 @@ function restoreForm(data){
     }
     document.getElementById('coord-sig-display').style.display='block';document.getElementById('coord-sign-section').style.display='none';
     lockSection('respondent-form-card');lockSection('basic-form-card');lockSection('inclusion-form-card');
+    
+    const btnU = document.getElementById('btn-unlock-coord');
+    const btnR = document.getElementById('btn-relock-coord');
+    if(btnU) btnU.style.display = 'inline-block';
+    if(btnR) btnR.style.display = 'none';
+
     document.getElementById('section-clinical').style.display='block';document.getElementById('section-hod').style.display='block';
     showDiseaseParts();advanceProgress(1);
     updateStageDisplay('STAGE 2: MO/Specialist Clinical Entry','Fill clinical details for the relevant disease sections, then sign.');
