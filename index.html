@@ -1950,9 +1950,8 @@ const hospitalDataRaw = [
         { state: "Sabah", name: "Hospital Kudat", jenis: 4, cluster: "Kota Marudu" }
 ];
 // ── STATE ──
-let formState={stage:0,coordPassword:null,caseCode:'',deathTypes:{acs:false,stroke:false,ckd:false,pneumo:false},signatures:{},anonymised:false};
+let formState={stage:0,coordPassword:null,caseCode:'',deathTypes:{acs:false,stroke:false,ckd:false,pneumo:false},signatures:{},anonymised:false,realData:{}};
 let isDarkTheme=true,fontSize=17;
-
 // ── INIT ──
 function closeStartup(action){
   document.getElementById('startup-modal').classList.remove('open');
@@ -1964,7 +1963,6 @@ function closeStartup(action){
 function updateDateTime(){document.getElementById('status-datetime').textContent=new Date().toLocaleString('en-MY');}
 function changeFontSize(d){fontSize=Math.max(11,Math.min(22,fontSize+d));document.documentElement.style.setProperty('--font-base',fontSize+'px');document.getElementById('font-display').textContent=fontSize;}
 function toggleTheme(){isDarkTheme=!isDarkTheme;document.documentElement.setAttribute('data-theme',isDarkTheme?'':'light');document.getElementById('theme-btn').textContent=isDarkTheme?'☀ Light':'🌙 Dark';}
-
 // ── HOSPITALS ──
 function filterHospitals(){
   const state=document.getElementById('state').value;
@@ -1979,7 +1977,6 @@ function showHospitalInfo(){
   const h=hospitalDataRaw.find(x=>x.name===name);
   document.getElementById('hosp-info-badge').textContent=h?`Jenis: ${h.jenis} | Cluster: ${h.cluster||'N/A'}`:'';
 }
-
 // ── IC ──
 function parseIC(){
   const raw = document.getElementById('ic-number').value;
@@ -2007,7 +2004,6 @@ function calcBMI(){
   const w=parseFloat(document.getElementById('weight').value),h=parseFloat(document.getElementById('height').value);
   if(w>0&&h>0)document.getElementById('bmi').value=(w/(h*h)).toFixed(1);
 }
-
 // ── DEATH TYPE & CODE ──
 function updateDeathTypes(){
   ['acs','stroke','ckd','pneumo'].forEach(t=>{
@@ -2032,7 +2028,6 @@ function updateSignCodePreview(){
   formState.caseCode=full!=='—'?full:'';
 }
 function updateCodePreview(){updateSignCodePreview();}
-
 // ── SIG PADS ──
 function initSigPads(){['coord-canvas','mo-canvas','hod-canvas','assessor-canvas'].forEach(id=>{const c=document.getElementById(id);if(c)initPad(c);});}
 function initPad(canvas){
@@ -2048,7 +2043,6 @@ function initPad(canvas){
 function clearSig(id){const c=document.getElementById(id);const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);}
 function isSigEmpty(id){const c=document.getElementById(id);const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=0;i<d.length;i+=4){if(d[i]<250||d[i+1]<250||d[i+2]<250)return false;}return true;}
 function getSigDataURL(id){return document.getElementById(id).toDataURL('image/png');}
-
 // ── MODALS ──
 function openModal(id){
   document.getElementById(id).classList.add('open');
@@ -2056,11 +2050,9 @@ function openModal(id){
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function openCoordSign(){updateSignCodePreview();openModal('coord-sign-modal');}
-
 // ── HOD WORD COUNT ──
 document.getElementById('hod-comments').addEventListener('input',function(){const n=this.value.trim().split(/\s+/).filter(Boolean).length;document.getElementById('hod-word-count').textContent=n+' words';});
 document.getElementById('hod-improvement').addEventListener('input',function(){const n=this.value.trim().split(/\s+/).filter(Boolean).length;document.getElementById('hod-improve-word-count').textContent=n+' words';});
-
 // ── COORD SIGN ──
 function submitCoordSign(){
   const name=document.getElementById('coord-name').value.trim();
@@ -2086,11 +2078,9 @@ function submitCoordSign(){
   document.getElementById('coord-sig-img').src=sigData;
   document.getElementById('coord-sig-display').style.display='block';
   document.getElementById('coord-sign-section').style.display='none';
-  
   lockSection('respondent-form-card');
   lockSection('basic-form-card');
   lockSection('inclusion-form-card');
-  
   document.getElementById('section-clinical').style.display='block';
   document.getElementById('section-hod').style.display='block';
   showDiseaseParts();advanceProgress(1);
@@ -2107,7 +2097,6 @@ function showDiseaseParts(){
     }
   });
 }
-
 // ── LOCK / UNLOCK ──
 function lockSection(id){const c=document.getElementById(id);if(!c)return;c.querySelectorAll('input,select,textarea').forEach(el=>el.disabled=true);c.classList.add('locked-card');}
 function unlockSection(id){const c=document.getElementById(id);if(!c)return;c.querySelectorAll('input,select,textarea').forEach(el=>el.disabled=false);c.classList.remove('locked-card');}
@@ -2119,16 +2108,13 @@ function attemptUnlock(){
     unlockSection('respondent-form-card');
     unlockSection('basic-form-card');
     unlockSection('inclusion-form-card');
-    
     const btnU = document.getElementById('btn-unlock-coord');
     const btnR = document.getElementById('btn-relock-coord');
     if(btnU) btnU.style.display = 'none';
     if(btnR) btnR.style.display = 'inline-block';
-    
     closeModal('unlock-modal');
   }else{err.style.display='block';}
 }
-
 function attemptRelock(){
   const pwd=document.getElementById('relock-password').value;
   const err=document.getElementById('relock-error');
@@ -2137,16 +2123,13 @@ function attemptRelock(){
     lockSection('respondent-form-card');
     lockSection('basic-form-card');
     lockSection('inclusion-form-card');
-    
     const btnU = document.getElementById('btn-unlock-coord');
     const btnR = document.getElementById('btn-relock-coord');
     if(btnR) btnR.style.display = 'none';
     if(btnU) btnU.style.display = 'inline-block';
-    
     closeModal('relock-modal');
   }else{err.style.display='block';}
 }
-
 // ── MO SIGN ──
 function submitMOSign(){
   const name=document.getElementById('mo-name').value.trim();
@@ -2162,13 +2145,10 @@ function submitMOSign(){
   document.getElementById('mo-sig-img').src=sigData;
   document.getElementById('mo-sig-display').style.display='block';
   document.getElementById('mo-sign-section').style.display='none';
-  
   lockSection('section-clinical');
-  
   advanceProgress(2);updateStageDisplay('STAGE 3: Awaiting HOD Signature','The Head of Department must now review and sign.');
   closeModal('mo-sign-modal');markUnsaved();
 }
-
 // ── HOD SIGN ──
 function submitHODSign(){
   const name=document.getElementById('hod-name').value.trim();
@@ -2181,7 +2161,6 @@ function submitHODSign(){
   if(wc<10||wc>50){err.textContent='❌ Comments must be 10–50 words.';err.style.display='block';return;}
   const impWc=imp.split(/\s+/).filter(Boolean).length;
   if(impWc<50||impWc>300){err.textContent='❌ Suggestion of improvement must be 50–300 words.';err.style.display='block';return;}
-  
   if(isSigEmpty('hod-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('hod-canvas');
@@ -2192,14 +2171,11 @@ function submitHODSign(){
   document.getElementById('hod-sig-img').src=sigData;
   document.getElementById('hod-sig-display').style.display='block';
   document.getElementById('hod-sign-btn').style.display='none';
-  
   lockSection('section-clinical');
-  
   document.getElementById('section-committee').style.display='block';
   advanceProgress(3);updateStageDisplay('STAGE 4: Committee Review','Form locked. Send to NIMMR Committee for anonymisation.');
   closeModal('hod-sign-modal');saveFormJSON();
 }
-
 // ── COMMITTEE ANONYMISE ──
 function submitCommittee(){
   const pwd=document.getElementById('committee-password').value;
@@ -2209,24 +2185,21 @@ function submitCommittee(){
   formState.anonymised=true;formState.stage=4;
    ['coord-sig-info','mo-sig-info','hod-sig-info'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='[SIGNATURE HIDDEN FOR ANONYMITY]';el.style.color='var(--text-dim)';}});
   ['coord-sig-img','mo-sig-img','hod-sig-img'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-
-  const fieldsToAnon = ['hospital-name', 'ic-number', 'resp-name', 'resp-desig', 'resp-contact', 'resp-email'];
+const fieldsToAnon = ['hospital-name', 'ic-number', 'resp-name', 'resp-desig', 'resp-contact', 'resp-email'];
   fieldsToAnon.forEach(id => {
     const el = document.getElementById(id);
     if(el && el.value !== '[ANONYMISED]') {
-      el.setAttribute('data-original', el.value);
+      formState.realData[id] = el.value; // Safely store the real data in JavaScript RAM
       if(el.tagName === 'SELECT' && !Array.from(el.options).some(o => o.value === '[ANONYMISED]')) el.add(new Option('[ANONYMISED]', '[ANONYMISED]'));
       el.value = '[ANONYMISED]';
     }
   });
-
   document.getElementById('section-assessor').style.display='block';
   document.getElementById('committee-btn').style.display='none';
   closeModal('committee-modal');
   advanceProgress(4);updateStageDisplay('STAGE 5: Assessor Review','Form anonymised. Assessor may now review and sign.');
   saveFormJSON();
 }
-
 // ── ASSESSOR SIGN ──
 function submitAssessorSign(){
   const name=document.getElementById('assessor-name').value.trim();
@@ -2236,44 +2209,34 @@ function submitAssessorSign(){
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
   if(isSigEmpty('assessor-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
-  
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('assessor-canvas');
   formState.signatures.assessor={name,deathCategory:cat,comments,datetime:now,sigData};
   formState.stage=5;
-  
   document.getElementById('assessor-comments-display').value=comments;
   document.getElementById('assessor-sig-info').textContent=`Assessor: ${name} | Category: ${cat} | ${now}`;
   document.getElementById('assessor-sig-img').src=sigData;
   document.getElementById('assessor-sig-display').style.display='block';
   document.getElementById('assessor-sign-btn').style.display='none';
-  
   lockSection('assessor-form-card');
-  
   document.getElementById('section-committee-final').style.display='block';
-  
   advanceProgress(5);
   updateStageDisplay('STAGE 6: Committee Final Decision','Assessor review complete. Committee to finalise form.');
   closeModal('assessor-sign-modal');saveFormJSON();
 }
-
 // ── COMMITTEE FINAL ──
 function submitCommitteeFinal(){
   const pwd=document.getElementById('committee-final-password').value;
   const err=document.getElementById('committee-final-error');
   if(pwd!==_ck){err.textContent='❌ Incorrect committee password.';err.style.display='block';return;}
   err.style.display='none';
-  
   formState.stage=6;
   lockSection('committee-final-card');
-  
   document.getElementById('committee-final-btn').style.display='none';
   document.getElementById('section-final').style.display='block';
-  
   advanceProgress(6);
   updateStageDisplay('STAGE 6: FINALISED','All signatures complete. Form is finalised.');
   closeModal('committee-final-modal');saveFormJSON();
 }
-
 // ── PROGRESS ──
 function advanceProgress(stage){
   for(let i=1;i<=stage;i++){const el=document.getElementById('prog-'+i);if(el){el.classList.remove('active');el.classList.add('done');}}
@@ -2284,13 +2247,11 @@ function updateStageDisplay(title,desc){
   document.getElementById('status-stage-text').textContent=title;
   document.getElementById('status-desc').textContent=desc;
 }
-
 // ── GCS / TIMI ──
 function updateGCS(){
   const eEl=document.getElementById('gcs-e'), vEl=document.getElementById('gcs-v'), mEl=document.getElementById('gcs-m'), tEl=document.getElementById('gcs-t');
   if(!eEl) return;
   if(eEl.closest('.locked-card')) return; // Safety switch
-  
   let e=parseInt(eEl.value)||0, v=parseInt(vEl.value)||0, m=parseInt(mEl.value)||0;
   if(e<0){e=0;eEl.value=0;} if(e>4){e=4;eEl.value=4;}
   if(m<0){m=0;mEl.value=0;} if(m>6){m=6;mEl.value=6;}
@@ -2298,7 +2259,6 @@ function updateGCS(){
   document.getElementById('gcs-total').textContent=(e+v+m);
 }
 function calcTIMI(){let s=0;for(let i=1;i<=7;i++){if(document.getElementById('timi-'+i).checked)s++;}document.getElementById('timi-total').textContent=s;}
-
 // ── TOGGLES ──
 function toggleACSType(){
   const v=document.querySelector('input[name=acs-spectrum]:checked')?.value;
@@ -2310,17 +2270,18 @@ function toggleStrokeType(){
   document.getElementById('stroke-ischaemic-section').style.display=v==='Ischaemic'?'block':'none';
   document.getElementById('stroke-haem-section').style.display=(v==='Haemorrhagic'||v==='Ischaemic with HT/Malignant Oedema')?'block':'none';
 }
-
 // ── HELPERS ──
 const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
 const gr=name=>{const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:'';};
 const gc=id=>{const el=document.getElementById(id);return el?el.checked:false;};
 const gcLabel=(id,label)=>gc(id)?label:'';
-
 // ── FULL DATA COLLECTION ──
 const b64 = (val) => formState.anonymised ? (val ? 'B64:' + btoa(unescape(encodeURIComponent(val))) : '') : val;
-const getAnon = (id) => { const el = document.getElementById(id); return b64(el ? (el.getAttribute('data-original') || el.value) : ''); };
-
+const getAnon = (id) => { 
+  const el = document.getElementById(id); 
+  const rawVal = formState.realData[id] || (el ? el.value : ''); // Grab from RAM first, fallback to screen
+  return b64(rawVal); 
+};
 function collectAllData(){
   const sigs = JSON.parse(JSON.stringify(formState.signatures));
   if(formState.anonymised) {
@@ -2328,7 +2289,6 @@ function collectAllData(){
     if(sigs.mo) { sigs.mo.name = b64(sigs.mo.name); sigs.mo.designation = b64(sigs.mo.designation); }
     if(sigs.hod) { sigs.hod.name = b64(sigs.hod.name); }
   }
-
   return {
     meta:{caseCode:formState.caseCode,stage:formState.stage,deathTypes:formState.deathTypes,anonymised:formState.anonymised,savedAt:new Date().toISOString()},
     respondent:{name:getAnon('resp-name'),designation:getAnon('resp-desig'),contact:getAnon('resp-contact'),email:getAnon('resp-email')},
@@ -2655,11 +2615,17 @@ async function saveFormJSON(){
   
   const blob=new Blob([encryptedString],{type:'application/octet-stream'});
   const url=URL.createObjectURL(blob);
-  const linkAnchor=document.createElement('a');linkAnchor.href=url;linkAnchor.download=(formState.caseCode||'NIMMR_DRAFT')+'.nimmr';linkAnchor.click();
-  URL.revokeObjectURL(url);markSaved();
+  const linkAnchor=document.createElement('a');
+  linkAnchor.href=url;
+  linkAnchor.download=(formState.caseCode||'NIMMR_DRAFT')+'.nimmr';
+  linkAnchor.click();
+  URL.revokeObjectURL(url);
+  markSaved();
 }
+
 function loadFormFile(event){
-  const file=event.target.files[0];if(!file)return;
+  const file=event.target.files[0];
+  if(!file)return;
   const reader=new FileReader();
   reader.onload=async e=>{
     try{
@@ -2672,16 +2638,24 @@ function loadFormFile(event){
       }
       
       const data=JSON.parse(jsonString);
-      if(!data.__nimmr){alert('Invalid NIMMR file.');return;}
+      if(!data.__nimmr){
+        alert('Invalid NIMMR file.');
+        return;
+      }
       restoreForm(data);
       closeModal('load-modal');
       document.getElementById('startup-modal').classList.remove('open');
       document.getElementById('main-content').style.display='block';
-      filterHospitals();updateGCS();updateDateTime();setInterval(updateDateTime,1000);
-    }catch(err){alert('Failed to load file. It may be corrupted, tampered with, or invalid.');}
-  };reader.readAsText(file);
+      filterHospitals();
+      updateGCS();
+      updateDateTime();
+      setInterval(updateDateTime,1000);
+    } catch(err) {
+      alert('Failed to load file. It may be corrupted, tampered with, or invalid.');
+    }
+  };
+  reader.readAsText(file);
 }
-
 
 function resetFormUI() {
   // 1. Wipe all inputs clean to prevent data bleeding
@@ -2767,11 +2741,13 @@ function restoreForm(data){
   const sr=(name,val)=>{const el=document.querySelector(`input[name="${name}"][value="${val}"]`);if(el){el.checked=true;el.dispatchEvent(new Event('change'));}};
   const sc=(id,val)=>{const el=document.getElementById(id);if(el){el.checked=!!val;el.dispatchEvent(new Event('change'));}};
   const s=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined&&val!==null){el.value=val;el.dispatchEvent(new Event('change'));}};
+formState.realData = {}; // Clear previous memory
   const sAnon=(id,val)=>{
      if(val && typeof val === 'string' && val.startsWith('B64:')) {
+        const decoded = dec(val);
+        formState.realData[id] = decoded; // Restore hidden data to RAM
         const el = document.getElementById(id);
         if(el) {
-           el.setAttribute('data-original', dec(val));
            if(el.tagName === 'SELECT' && !Array.from(el.options).some(o => o.value === '[ANONYMISED]')) el.add(new Option('[ANONYMISED]', '[ANONYMISED]'));
            s(id, '[ANONYMISED]');
         }
