@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIMMR Universal Consolidator & Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #111827;
+    --surface: #1f2937;
+    --surface2: #374151;
+    --border: #4b5563;
+    --text: #f9fafb;
+    --text-muted: #9ca3af;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --purple: #8b5cf6;
+    --cyan: #06b6d4;
+  }
+  
+  [data-theme="light"] {
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --surface2: #f8fafc;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text-muted: #6b7280;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background-color: var(--surface2);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent-light);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* Bar Charts */
+  .bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    gap: 0.75rem;
+  }
+  .bar-label {
+    width: 140px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-track {
+    flex: 1;
+    height: 12px;
+    background-color: var(--surface2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .bar-value {
+    width: 40px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Tables */
+  th {
+    background-color: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--success);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    z-index: 50;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.error { background-color: var(--danger); }
+</style>
+</head>
+<body data-theme="dark">
+
+<header class="card border-0 border-b rounded-none px-6 py-4 flex justify-between items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md">
+  <div class="flex items-center gap-4">
+    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-black text-white shadow-lg text-lg">N</div>
+    <div>
+      <h1 class="font-bold text-lg leading-tight tracking-wide">NIMMR Consolidator</h1>
+      <p class="text-xs text-[var(--text-muted)] font-medium">Standardized JSON-to-CSV Aggregation Dashboard</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <button onclick="toggleTheme()" class="px-3 py-2 rounded-md border border-[var(--border)] hover:bg-[var(--surface2)] text-sm font-semibold transition-colors">
+      Theme
+    </button>
+    <button onclick="exportMasterCSV()" id="exportBtn" disabled class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-md shadow transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      Export Master CSV
+    </button>
+  </div>
+</header>
+
+<main class="flex-1 max-w-[1400px] w-full mx-auto p-6 flex flex-col gap-6">
+  
+  <!-- Upload Zone -->
+  <div class="card drop-zone flex flex-col items-center justify-center py-10" id="dropZone" onclick="document.getElementById('fileInput').click()">
+    <div class="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-4 text-[var(--accent-light)]">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+    </div>
+    <h2 class="text-lg font-extrabold mb-2">Upload .nimmr Case Files</h2>
+    <p class="text-sm text-[var(--text-muted)] text-center max-w-lg font-medium">
+      Drag & drop multiple completed form files here simultaneously. The engine will extract all data and perfectly map it to the standardized CSV schema.
+    </p>
+    <input type="file" id="fileInput" multiple accept=".nimmr,.json" class="hidden">
+  </div>
+
+  <div id="dashboardArea" class="hidden flex-col gap-6">
+    <!-- Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card flex flex-col justify-center border-l-4 border-l-[var(--accent-light)]">
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Total Extracted Cases</span>
+        <div class="text-4xl font-black mt-1 text-[var(--text)]" id="metricTotal">0</div>
+      </div>
+      <div class="card flex flex-col justify-center border-l-4 border-l-[var(--success)]">
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Finalized Reviews (Stg 6)</span>
+        <div class="text-3xl font-black mt-1" id="metricFinalized">0<span class="text-sm font-medium text-[var(--text-muted)] ml-2" id="metricFinalizedPct">(0%)</span></div>
+      </div>
+      <div class="card flex flex-col justify-center border-l-4 border-l-[var(--danger)]">
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Preventable Deaths</span>
+        <div class="text-3xl font-black mt-1 text-[var(--danger)]" id="metricPreventable">0<span class="text-sm font-medium text-[var(--text-muted)] ml-2" id="metricPreventablePct">(0%)</span></div>
+      </div>
+      <div class="card flex flex-col justify-center border-l-4 border-l-[var(--cyan)]">
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Average Age</span>
+        <div class="text-3xl font-black mt-1" id="metricAvgAge">0.0<span class="text-sm font-medium text-[var(--text-muted)] ml-2">yrs</span></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="card">
+        <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Mortality Cohorts</h3>
+        <div id="chartDisease" class="flex flex-col gap-2"></div>
+      </div>
+      <div class="card">
+        <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Workflow Stages</h3>
+        <div id="chartStage" class="flex flex-col gap-2"></div>
+      </div>
+      <div class="card">
+        <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Top Contributory Factors by Phase</h3>
+        <div id="chartRCA" class="flex flex-col gap-2"></div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card overflow-hidden p-0 flex flex-col border border-[var(--border)]">
+      <div class="px-5 py-4 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface2)]">
+        <h3 class="text-xs font-bold uppercase text-[var(--text)] tracking-wider">Live Standardized Data Preview</h3>
+        <button onclick="clearData()" class="text-xs font-semibold text-[var(--danger)] hover:text-white hover:bg-[var(--danger)] px-3 py-1 rounded transition-colors">Clear Memory</button>
+      </div>
+      <div class="overflow-x-auto max-h-[400px]">
+        <table class="w-full text-left border-collapse">
+          <thead class="sticky top-0 z-10">
+            <tr id="tableHeaders"></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast">Ready</div>
+
+<script>
+  // ── OFFLINE AES-GCM ENCRYPTION ENGINE ──
+  const _cryptoSecret = atob('b3Blbi1yZXBvcnQtbm93IQ==');
+  async function getCryptoKey() { const enc = new TextEncoder(); const keyMaterial = await crypto.subtle.digest('SHA-256', enc.encode(_cryptoSecret)); return await crypto.subtle.importKey('raw', keyMaterial, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']); }
+  async function decryptNIMMR(b64String) { const key = await getCryptoKey(); const bin = atob(b64String); const combined = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) combined[i] = bin.charCodeAt(i); const iv = combined.slice(0, 12); const data = combined.slice(12); const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, data); return new TextDecoder().decode(decrypted); }
+
+  // ── STATE ──
+  let rawDataFiles = [];
+  let compiledRows = [];
+
+  // Preview Headers for the HTML Table
+  const previewHeaders = ['Case Code', 'State', 'Hospital Name', 'Age at Death', 'Gender', 'Form Stage', 'Death Date'];
+
+  // ── UI HELPERS ──
+  function toggleTheme() {
+    const body = document.body;
+    body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  }
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = isError ? 'error show' : 'show';
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── FILE INGESTION ──
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', e => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', e => {
+    if (e.target.files.length) processFiles(e.target.files);
+  });
+
+  function processFiles(files) {
+    const promises = Array.from(files).map(file => {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = async e => {
+          try { 
+            let rawText = e.target.result.trim();
+            let jsonString = rawText;
+            
+            // If it doesn't look like JSON, attempt decryption
+            if (!rawText.startsWith('{')) {
+              jsonString = await decryptNIMMR(rawText);
+            }
+            
+            resolve(JSON.parse(jsonString)); 
+          } 
+          catch { resolve(null); }
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    Promise.all(promises).then(results => {
+      const valid = results.filter(data => data !== null && data.__nimmr);
+      if (valid.length) {
+        rawDataFiles.push(...valid);
+        buildDatabase();
+        updateDashboard();
+        showToast(`Imported ${valid.length} NIMMR records successfully.`);
+        document.getElementById('exportBtn').disabled = false;
+        document.getElementById('dashboardArea').classList.remove('hidden');
+        document.getElementById('dashboardArea').classList.add('flex');
+      } else {
+        showToast("No valid .nimmr files found.", true);
+      }
+    });
+  }
+
+  function clearData() {
+    rawDataFiles = []; compiledRows = [];
+    document.getElementById('dashboardArea').classList.remove('flex');
+    document.getElementById('dashboardArea').classList.add('hidden');
+    document.getElementById('exportBtn').disabled = true;
+    fileInput.value = "";
+    showToast("Memory cleared.");
+  }
+
+  function decodeB64(val) {
+    try { 
+      return (typeof val === 'string' && val.startsWith('B64:')) ? decodeURIComponent(escape(atob(val.substring(4)))) : val; 
+    } catch(e) { 
+      return val; 
+    }
+  }
+
+  // ── EXACT SCHEMA MAPPER ──
+  function getStandardizedRow(d) {
+    const bi = d.basicInfo || {}; const a = d.partA || {}; const cm = d.comorbidities || {}; const rf = d.riskFactors || {};
+    const v = d.vitals || {}; const inv = d.investigations || {}; const pf = d.partF || {};
+    const acs = d.acs || {}; const st = d.stroke || {}; const ckd = d.ckd || {}; const pn = d.pneumonia || {};
+    const hod = d.hodReview || {}; const com = d.committee || {}; const ass = d.assessorReview || {};
+
+    return {
+        // META
+        'Case Code':d.meta?.caseCode||'','Form Stage':d.meta?.stage||0,'Anonymised':d.meta?.anonymised?'Yes':'No','Saved At':d.meta?.savedAt||'',
+        // RESPONDENT
+        'Respondent Name':decodeB64(d.respondent?.name)||'','Respondent Designation':decodeB64(d.respondent?.designation)||'','Respondent Contact':decodeB64(d.respondent?.contact)||'','Respondent Email':decodeB64(d.respondent?.email)||'',
+        // BASIC INFO
+        'Hospital Name': decodeB64(bi.hospitalName)||'',
+        'State':bi.state||'',
+        'Patient IC Number': decodeB64(bi.icNumber)||'',
+        'Date of Birth':bi.dob||'',
+        'Gender':bi.gender||'','Age at Death':bi.ageAtDeath||'','Ethnicity':bi.ethnicity||'','Ethnicity (Others)':bi.ethnicityOther||'',
+        'Body Weight (kg)':bi.weight||'','Height (m)':bi.height||'','BMI (kg/m²)':bi.bmi||'',
+        'First Encounter Date':bi.firstEncDate||'','First Encounter Time':bi.firstEncTime||'',
+        'Admission to Ward Date':bi.admissionDate||'','Admission to Ward Time':bi.admissionTime||'',
+        'Death Date':bi.deathDate||'','Death Time':bi.deathTime||'','Place of Death':bi.placeDeath||'','Cause of Death':bi.causeDeath||'',
+        'Form Issued Date':bi.formIssuedDate||'','Coordinator Initials':bi.coordInitials||'',
+        // PART A
+        'Inc: Age 25-54': a.incAge?'Yes':'No', 'Inc: Death in 14d': a.inc14d?'Yes':'No', 'Inc: Medical Ward/ED': a.incWard?'Yes':'No', 'Inc: Specific Diagnosis': a.incDx?'Yes':'No',
+        'Exc: Non-Malaysian': a.excNonMy?'Yes':'No', 'Exc: Maternal': a.excMaternal?'Yes':'No', 'Exc: Private Hosp': a.excPrivate?'Yes':'No', 'Exc: Self Harm': a.excHarm?'Yes':'No', 'Exc: Cancer': a.excCancer?'Yes':'No', 'Exc: Active TB': a.excPTB?'Yes':'No', 'Exc: Immunosuppressive': a.excImmuno?'Yes':'No',
+        'Source of Referral':a.referralSource||'','Admission Via':a.admissionVia||'',
+        'Direct Admission Hospital':a.directAdmissionHospital||'','Transferred from Another MOH Hospital':a.transferred||'',
+        'Previous Hospital Encounter Date':a.prevEncDate||'','Previous Hospital Encounter Time':a.prevEncTime||'',
+        'Arrival at Current Hospital Date':a.currArrDate||'','Arrival at Current Hospital Time':a.currArrTime||'',
+        'Follow-up: KK':a.followupKK?'Yes':'No','Follow-up: GP':a.followupGP?'Yes':'No',
+        'Follow-up: Government Hospital':a.followupGH?'Yes':'No','Follow-up: Private Hospital':a.followupPH?'Yes':'No',
+        'Follow-up: Defaulted':a.followupDefault?'Yes':'No','Follow-up: Not Required':a.followupNotRequired?'Yes':'No',
+        'Previous Hospitalisation within 1 Year':a.prevHosp||'','Number of Previous Admissions':a.prevHospCount||'',
+        // DEATH TYPES
+        'Death Type: ACS (A)':d.meta?.deathTypes?.acs?1:0,'Death Type: Stroke (B)':d.meta?.deathTypes?.stroke?1:0,
+        'Death Type: CKD (C)':d.meta?.deathTypes?.ckd?1:0,'Death Type: Pneumonia (D)':d.meta?.deathTypes?.pneumo?1:0,
+        // CO-MORBIDITIES
+        'Comorbidity: No Information':cm.noInfo?'Yes':'No','Comorbidity: None':cm.none?'Yes':'No',
+        'Comorbidity: IHD':cm.ihd?'Yes':'No','Comorbidity: Obesity':cm.obesity?'Yes':'No',
+        'Comorbidity: Diabetes Mellitus':cm.dm?'Yes':'No','Comorbidity: Atrial Fibrillation':cm.af?'Yes':'No',
+        'Comorbidity: Previous TIA/Stroke':cm.tia?'Yes':'No','Comorbidity: Hypertension':cm.htn?'Yes':'No',
+        'Comorbidity: HIV':cm.hiv?'Yes':'No','Comorbidity: COPD':cm.copd?'Yes':'No',
+        'Comorbidity: Dyslipidaemia':cm.dyslip?'Yes':'No','Comorbidity: CKD':cm.ckd?'Yes':'No',
+        'Comorbidity: OSA':cm.osa?'Yes':'No','Comorbidity: Bronchial Asthma':cm.asthma?'Yes':'No',
+        'Comorbidity: Valvular Heart Disease':cm.vhd?'Yes':'No','Comorbidity: Other':cm.otherText||'',
+        // RISK FACTORS
+        'Risk Factor: None':rf.none?'Yes':'No','Risk Factor: Smoking':rf.smoking?'Yes':'No',
+        'Risk Factor: Vaping':rf.vaping?'Yes':'No','Risk Factor: Drug/Substance Abuse':rf.drug?'Yes':'No',
+        'Risk Factor: Alcohol Abuse':rf.alcohol?'Yes':'No','Risk Factor: Other':rf.otherText||'',
+        // MEDICATIONS & VACCINATION
+        'Medication History':d.medications?.status||'','Medication List':d.medications?.list||'',
+        'Vaccination: Influenza':d.vaccination?.influenza||'','Vaccination: Pneumococcal':d.vaccination?.pneumococcal||'','Vaccination: COVID-19':d.vaccination?.covid||'',
+        // VITALS
+        'Systolic BP (mmHg)':v.sbp||'','Diastolic BP (mmHg)':v.dbp||'','Pulse Rate (bpm)':v.pr||'','Blood Glucose (mmol/L)':v.bg||'',
+        'Respiration Rate (/min)':v.rr||'','Temperature (°C)':v.temp||'','SpO2 (%) on Room Air':v.spo2||'',
+        'GCS Eyes':v.gcsE||'','GCS Verbal':v.gcsV||'','GCS Motor':v.gcsM||'','GCS Total':v.gcsTotal||'',
+        'Assessed by IM Physician':v.imAssessed||'','IM Assessment Date':v.imAssessDate||'','IM Assessment Time':v.imAssessTime||'',
+        'Managed in ICU/HDW':v.icuManaged||'','Ventilated During Hospitalisation':v.ventilated||'',
+        // INVESTIGATIONS
+        'Hb (g/dL)':inv.hb||'','WBC (10⁹/L)':inv.wbc||'','Platelet (10⁹/L)':inv.plt||'','Urea (mmol/L)':inv.urea||'',
+        'Creatinine (µmol/L)':inv.creat||'','Potassium (mmol/L)':inv.k||'','HCO3 (mmol/L)':inv.hco3||'',
+        'eGFR (mL/min/1.73m²)':inv.egfr||'','LDL-C (mmol/L)':inv.ldl||'',
+        // ACS
+        'ACS: Diagnosis Date':acs.diagDate||'','ACS: Spectrum':acs.spectrum||'',
+        'ACS: Onset Known':acs.onsetKnown||'','ACS: Onset Date':acs.onsetDate||'','ACS: Onset Time':acs.onsetTime||'',
+        'ACS: Presentation Date':acs.presentationDate||'','ACS: Troponin':acs.troponin||'','ACS: CKMB/CK':acs.ckmb||'',
+        'ACS: CCU Admitted':acs.ccuAdmit||'','ACS: CCU Not Admitted Reason':acs.ccuNoReason||'',
+        'ACS: TIMI Score':acs.timiScore||'',
+        'NSTEMI: Anti-platelet Aspirin':acs.nstemi?.ap_aspirin?'Yes':'','NSTEMI: Anti-platelet Clopidogrel':acs.nstemi?.ap_clopi?'Yes':'',
+        'NSTEMI: Anti-platelet Ticagrelor':acs.nstemi?.ap_tica?'Yes':'','NSTEMI: Anti-platelet Ticlopidine':acs.nstemi?.ap_ticlo?'Yes':'',
+        'NSTEMI: Anti-platelet GP Inhibitor':acs.nstemi?.ap_gp?'Yes':'','NSTEMI: Anti-platelet Contraindicated':acs.nstemi?.ap_contra?'Yes':'',
+        'NSTEMI: Anti-platelet None':acs.nstemi?.ap_none?'Yes':'','NSTEMI: Anti-platelet Other':acs.nstemi?.ap_other?'Yes':'','NSTEMI: Anti-platelet Other Text':acs.nstemi?.ap_otherText||'',
+        'NSTEMI: Anti-coagulant Fondaparinux':acs.nstemi?.ac_fondap?'Yes':'','NSTEMI: Anti-coagulant LMWH':acs.nstemi?.ac_lmwh?'Yes':'',
+        'NSTEMI: Anti-coagulant UFH':acs.nstemi?.ac_ufh?'Yes':'','NSTEMI: Anti-coagulant Contraindicated':acs.nstemi?.ac_contra?'Yes':'',
+        'NSTEMI: Anti-coagulant None':acs.nstemi?.ac_none?'Yes':'','NSTEMI: Anti-coagulant Other':acs.nstemi?.ac_other?'Yes':'','NSTEMI: Anti-coagulant Other Text':acs.nstemi?.ac_otherText||'',
+        'NSTEMI: Statin':acs.nstemi?.statin||'','NSTEMI: ACE-I/ARB':acs.nstemi?.ace||'','NSTEMI: Beta Blocker':acs.nstemi?.bb||'',
+        'NSTEMI: Cardiac Catheterisation':acs.nstemi?.cath||'','NSTEMI: PCI':acs.nstemi?.pci||'',
+        'STEMI: Killip Class':acs.stemi?.killip||'','STEMI: Fibrinolytic Given':acs.stemi?.fibrinGiven||'',
+        'STEMI: Fibrinolytic Type':acs.stemi?.fibrinType||'','STEMI: Door to Needle (mins)':acs.stemi?.d2n||'',
+        'STEMI: No Fibrinolytic - PPCI':acs.stemi?.fn_ppci?'Yes':'','STEMI: No Fibrinolytic - >12h Hospital':acs.stemi?.fn_12hHosp?'Yes':'',
+        'STEMI: No Fibrinolytic - >12h Patient':acs.stemi?.fn_12hPt?'Yes':'','STEMI: No Fibrinolytic - Contraindicated':acs.stemi?.fn_contra?'Yes':'',
+        'STEMI: No Fibrinolytic - Not Consented':acs.stemi?.fn_consent?'Yes':'',
+        'STEMI: Cardiac Catheterisation':acs.stemi?.cath||'','STEMI: PCI Type':acs.stemi?.pci||'','STEMI: Door to Balloon (mins)':acs.stemi?.d2b||'',
+        'STEMI: Anti-platelet Aspirin':acs.stemi?.ap_aspirin?'Yes':'','STEMI: Anti-platelet Clopidogrel':acs.stemi?.ap_clopi?'Yes':'',
+        'STEMI: Anti-platelet Ticagrelor':acs.stemi?.ap_tica?'Yes':'','STEMI: Anti-platelet Ticlopidine':acs.stemi?.ap_ticlo?'Yes':'',
+        'STEMI: Anti-platelet GP Inhibitor':acs.stemi?.ap_gp?'Yes':'','STEMI: Anti-platelet Contraindicated':acs.stemi?.ap_contra?'Yes':'',
+        'STEMI: Anti-platelet None':acs.stemi?.ap_none?'Yes':'','STEMI: Anti-platelet Other':acs.stemi?.ap_other?'Yes':'','STEMI: Anti-platelet Other Text':acs.stemi?.ap_otherText||'',
+        'STEMI: Anti-coagulant Fondaparinux':acs.stemi?.ac_fondap?'Yes':'','STEMI: Anti-coagulant LMWH':acs.stemi?.ac_lmwh?'Yes':'',
+        'STEMI: Anti-coagulant UFH':acs.stemi?.ac_ufh?'Yes':'','STEMI: Anti-coagulant Contraindicated':acs.stemi?.ac_contra?'Yes':'',
+        'STEMI: Anti-coagulant None':acs.stemi?.ac_none?'Yes':'','STEMI: Anti-coagulant Other':acs.stemi?.ac_other?'Yes':'','STEMI: Anti-coagulant Other Text':acs.stemi?.ac_otherText||'',
+        'STEMI: Statin':acs.stemi?.statin||'','STEMI: ACE-I/ARB':acs.stemi?.ace||'','STEMI: Beta Blocker':acs.stemi?.bb||'',
+        // STROKE
+        'Stroke Exc: TIA':st.excTIA?'Yes':'','Stroke Exc: SOL':st.excSOL?'Yes':'','Stroke Exc: Non-Atherosclerotic':st.excNonAth?'Yes':'','Stroke Exc: Mimic':st.excMimic?'Yes':'','Stroke Exc: SAH/SDH':st.excSAH?'Yes':'',
+        'Stroke: Timing':st.timing||'','Stroke: Type':st.type||'',
+        'Stroke: Onset Type':st.onsetType||'','Stroke: Onset Date':st.onsetDate||'','Stroke: Onset Time':st.onsetTime||'',
+        'Stroke: Last Seen Well Date':st.lastSeenDate||'','Stroke: Last Seen Well Time':st.lastSeenTime||'',
+        'Stroke: NIHSS at Presentation':st.nihss||'','Stroke: Managed in ASU':st.asu||'',
+        'Stroke: Thrombolysis':st.thrombolysis||'','Stroke: Thrombolysis Not Done - Out of Window':st.tnr_window?'Yes':'',
+        'Stroke: Thrombolysis Not Done - Wake-up':st.tnr_wakeup?'Yes':'','Stroke: Thrombolysis Not Done - Contraindicated':st.tnr_contra?'Yes':'',
+        'Stroke: Thrombolysis Not Done - Not Consented':st.tnr_consent?'Yes':'','Stroke: Thrombolysis Not Done - Service NA':st.tnr_service?'Yes':'',
+        'Stroke: Thrombolysis Not Done - Mild Deficit':st.tnr_mild?'Yes':'','Stroke: Thrombolysis Not Done - Only Thrombectomy':st.tnr_thrombectomy?'Yes':'',
+        'Stroke: Thrombectomy':st.thrombectomy||'','Stroke: Thrombectomy Not Done - Out of Window':st.thr_window?'Yes':'',
+        'Stroke: Thrombectomy Not Done - In-House NA':st.thr_inhouse?'Yes':'','Stroke: Thrombectomy Not Done - Cluster NA':st.thr_cluster?'Yes':'',
+        'Stroke: Neurosurgery Referral':st.neuroRef||'','Stroke: Neurosurgical Intervention':st.neuroInterv||'',
+        'Stroke: Complication - Pneumonia':st.comp_pneumonia?'Yes':'','Stroke: Complication - UTI':st.comp_uti?'Yes':'',
+        'Stroke: Complication - Recurrence':st.comp_recurrence?'Yes':'','Stroke: Complication - DVT':st.comp_dvt?'Yes':'',
+        'Stroke: Complication - Seizure':st.comp_seizure?'Yes':'','Stroke: Complication - PE':st.comp_pe?'Yes':'',
+        'Stroke: Complication - Delirium':st.comp_delirium?'Yes':'','Stroke: Complication - Pressure Sore':st.comp_pressure?'Yes':'',
+        // CKD
+        'CKD: Pre-existing CKD Stage 5':ckd.preCkd5||'','CKD: AKI Without CKD5':ckd.akiNoCkd5||'',
+        'CKD: On Dialysis':ckd.dialysis||'','CKD: Dialysis Duration (years)':ckd.dialysisYrs||'','CKD: Dialysis Duration (months)':ckd.dialysisMths||'',
+        'CKD: KRT Modality':ckd.krtMod||'','CKD: Nephrology Referral':ckd.nephroRef||'',
+        'CKD: Nephrology Follow-Up':ckd.nephroFU||'','CKD: Nephrology FU Duration (years)':ckd.nephroFUYrs||'','CKD: Nephrology FU Duration (months)':ckd.nephroFUMths||'',
+        'CKD: KRT Counselling':ckd.krtCounselling||'','CKD: KRT Counselling Outcome':ckd.krtOutcome||'','CKD: KRT Type Agreed':ckd.krtAgreedType||'','CKD: KRT Refusal Reason':ckd.krtRefusedReason||'',
+        'CKD: Kidney Transplant Counselling':ckd.ktCounselling||'','CKD: Kidney Transplant Planned':ckd.ktPlanned||'','CKD: Transplant Not Planned Reason':ckd.ktNotPlannedReason||'',
+        'CKD: Inpatient Nephrology Referral':ckd.inpNephro||'','CKD: Dialysis Indicated':ckd.dialysisInd||'',
+        'CKD: Dialysis Reason - Uraemia':ckd.dir_uraemia?'Yes':'','CKD: Dialysis Reason - Electrolyte':ckd.dir_electrolyte?'Yes':'',
+        'CKD: Dialysis Reason - Acidosis':ckd.dir_acidosis?'Yes':'','CKD: Dialysis Reason - Fluid Overload':ckd.dir_fluid?'Yes':'',
+        'CKD: Dialysis Reason - Routine':ckd.dir_routine?'Yes':'','CKD: Inpatient Dialysis Done':ckd.inpDialysisDone||'',
+        'CKD: Dialysis Not Done - Haemodynamically Unstable':ckd.dndr_unstable?'Yes':'','CKD: Dialysis Not Done - Access Difficulty':ckd.dndr_access?'Yes':'','CKD: Dialysis Not Done - Not Consented':ckd.dndr_consent?'Yes':'',
+        'CKD: Time Decision to Dialysis (hours)':ckd.decisionToDialysis||'',
+        'CKD: CRBSI':ckd.crbsi||'','CKD: CRBSI Blood Culture':ckd.crbsiCulture||'','CKD: CRBSI Organism':ckd.crbsiOrganism||'',
+        'CKD: PD Peritonitis':ckd.pdPeritonitis||'','CKD: PD Culture':ckd.pdCulture||'','CKD: PD Organism':ckd.pdOrganism||'',
+        // PNEUMONIA
+        'Pneumonia: CXR':pn.imgCXR||'','Pneumonia: CT Thorax':pn.imgCT||'','Pneumonia: US Lungs':pn.imgUS||'',
+        'Pneumonia: Formal CXR Report Done':pn.cxrFormalReport||'',
+        'Pneumonia: CXR - Infiltrate':pn.cxr_infil?'Yes':'','Pneumonia: CXR - Consolidation':pn.cxr_consol?'Yes':'',
+        'Pneumonia: CXR - Cavitation':pn.cxr_cavit?'Yes':'','Pneumonia: CXR - Pleural Effusion':pn.cxr_effusion?'Yes':'',
+        'Pneumonia: Symptom - Fever':pn.sx_fever?'Yes':'','Pneumonia: Symptom - Cough':pn.sx_cough?'Yes':'','Pneumonia: Symptom - Dyspnoea':pn.sx_dyspnea?'Yes':'','Pneumonia: Symptom - Chest Pain':pn.sx_chest?'Yes':'',
+        'Pneumonia: Sign - RR >20':pn.sg_rr?'Yes':'','Pneumonia: Sign - Temp >37.5':pn.sg_temp?'Yes':'','Pneumonia: Sign - Crepitation':pn.sg_crep?'Yes':'',
+        'Pneumonia: Sign - Bronchial Breath Sound':pn.sg_bronch?'Yes':'','Pneumonia: Sign - SpO2 <95%':pn.sg_spo2?'Yes':'',
+        'Pneumonia: Onset':pn.onset||'',
+        'Pneumonia: Culture - Blood':pn.cx_blood?'Yes':'','Pneumonia: Culture - Respiratory':pn.cx_resp?'Yes':'',
+        'Pneumonia: Culture Result':pn.cultureResult||'','Pneumonia: Culture Organism':pn.cultureOrganism||'',
+        'Pneumonia: RDT Result':pn.rdt||'','Pneumonia: RDT Specify':pn.rdtSpecify||'',
+        'Pneumonia: Influenza Test':pn.fluTest||'','Pneumonia: COVID-19 Test':pn.covidTest||'',
+        'Pneumonia: Antibiotic Given':pn.abxGiven||'','Pneumonia: Antibiotic Within 1 Hour':pn.abxWithin1h||'',
+        'Antibiotic: Unasyn':pn.abx_unasyn?'Yes':'','Antibiotic: Augmentin':pn.abx_augmentin?'Yes':'','Antibiotic: Ceftriaxone':pn.abx_ceftriaxone?'Yes':'',
+        'Antibiotic: Cefuroxime':pn.abx_cefuroxime?'Yes':'','Antibiotic: Piperacillin-tazobactam':pn.abx_tazo?'Yes':'','Antibiotic: Ceftazidime':pn.abx_ceftazidime?'Yes':'',
+        'Antibiotic: Cefepime':pn.abx_cefepime?'Yes':'','Antibiotic: Azithromycin':pn.abx_azithro?'Yes':'','Antibiotic: Moxifloxacin':pn.abx_moxiflox?'Yes':'',
+        'Antibiotic: Meropenem':pn.abx_meropenem?'Yes':'','Antibiotic: Imipenem':pn.abx_imipenem?'Yes':'','Antibiotic: Ertapenem':pn.abx_ertapenem?'Yes':'','Antibiotic: Others':pn.abx_otherText||'',
+        // PART F
+        'Narrative Report':pf.narrative||'','Document Attached':pf.docAttached?'Yes':'No','Document Attachment Notes':pf.docNotes||'',
+        // SIGNATURES & REVIEWS
+        'Coordinator Name':decodeB64(d.signatures?.coord?.name)||'','Coordinator Sign Date/Time':d.signatures?.coord?.datetime||'',
+        'MO/Specialist Name':decodeB64(d.signatures?.mo?.name)||'','MO Designation':decodeB64(d.signatures?.mo?.designation)||'','MO Sign Date/Time':d.signatures?.mo?.datetime||'','MO Death Category':d.signatures?.mo?.deathCategory||'',
+        'HOD Name':decodeB64(d.signatures?.hod?.name)||'','HOD Sign Date/Time':d.signatures?.hod?.datetime||'','HOD Death Category':hod.deathCategory||'','HOD Comments':hod.comments||'','HOD Suggestion for Improvement':hod.improvement||'',
+        'Committee Decision Date':com.date||'','Committee Decision':com.decision||'','Committee Comments':com.comments||'',
+        'Assessor Name':decodeB64(d.signatures?.assessor?.name)||'','Assessor Sign Date/Time':d.signatures?.assessor?.datetime||'','Assessor Death Category':ass.deathCategory||'','Assessor Comments':ass.comments||'',
+        // CONTRIBUTING FACTORS (RCA TABLE)
+        'RCA Gen: Equipment':ass.rca_gen_equip?'Yes':'No',
+        'RCA Gen: Communication':ass.rca_gen_comm?'Yes':'No',
+        'RCA Gen: Inv Delays':ass.rca_gen_inv?'Yes':'No',
+        'RCA Gen: Bed Shortages':ass.rca_gen_bed?'Yes':'No',
+        'RCA Gen: System Delays':ass.rca_gen_sys?'Yes':'No',
+        'RCA Gen: Human Factors':ass.rca_gen_human?'Yes':'No',
+        'RCA Gen: Patient Factors':ass.rca_gen_patient?'Yes':'No',
+        'RCA Pre: Lack Screening':ass.rca_pre_screen?'Yes':'No',
+        'RCA Pre: Inadequate Optimisation':ass.rca_pre_opt?'Yes':'No',
+        'RCA Pre: Non-Compliance':ass.rca_pre_noncomp?'Yes':'No',
+        'RCA Pre: Financial':ass.rca_pre_fin?'Yes':'No',
+        'RCA Init: Delayed Presentation':ass.rca_init_delay?'Yes':'No',
+        'RCA Init: Delayed/Inaccurate Diagnosis':ass.rca_init_diag?'Yes':'No',
+        'RCA Init: Inadequate Severity Assessment':ass.rca_init_sev?'Yes':'No',
+        'RCA Init: Newly Diagnosed Complex Condition':ass.rca_init_new?'Yes':'No',
+        'RCA Init: Inappropriate Placement':ass.rca_init_place?'Yes':'No',
+        'RCA Init: Inadequate Staffing':ass.rca_init_staff?'Yes':'No',
+        'RCA Tx: Delay Time-Critical Therapies':ass.rca_tx_time?'Yes':'No',
+        'RCA Tx: Delayed/Omitted Procedures':ass.rca_tx_proc?'Yes':'No',
+        'RCA Tx: Delay Inter-Facility Transfer':ass.rca_tx_transfer?'Yes':'No',
+        'RCA Tx: Anatomical Challenges':ass.rca_tx_anat?'Yes':'No',
+        'RCA Tx: Vascular Access':ass.rca_tx_vasc?'Yes':'No',
+        'RCA Tx: Procedural Complications':ass.rca_tx_comp?'Yes':'No',
+        'RCA Tx: Refusal of Intervention':ass.rca_tx_refuse?'Yes':'No',
+        'RCA Inp: Inadequate Monitoring':ass.rca_inp_mon?'Yes':'No',
+        'RCA Inp: Inappropriate Drug Selection':ass.rca_inp_drug?'Yes':'No',
+        'RCA Inp: Inappropriate Drug Dosage':ass.rca_inp_dose?'Yes':'No',
+        'RCA Inp: Delay Critical Medications':ass.rca_inp_admin?'Yes':'No',
+        'RCA Inp: Inadequate Treatment':ass.rca_inp_tx?'Yes':'No',
+        'RCA Inp: IPC Non-Compliance':ass.rca_inp_ipc?'Yes':'No',
+        'RCA Inp: Life-Threatening Complications':ass.rca_inp_life?'Yes':'No',
+        'RCA Other: Checked':ass.rca_other_check?'Yes':'No',
+        'RCA Other: Specify':ass.rca_other_text||''
+    };
+  }
+
+  // ── COMPILATION ──
+  function buildDatabase() {
+    compiledRows = [];
+    rawDataFiles.forEach(raw => {
+      compiledRows.push(getStandardizedRow(raw));
+    });
+  }
+
+  // ── DASHBOARD UPDATE ──
+  function updateDashboard() {
+    let tAge = 0, vAges = 0, stg6 = 0, preventableCount = 0;
+    const dx = { acs: 0, stroke: 0, ckd: 0, pneumo: 0 };
+    const stg = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
+    
+    // Setup categories for Option B RCA Chart
+    const rcaCats = { Gen: {}, Pre: {}, Init: {}, Tx: {}, Inp: {}, Other: {} };
+
+    // Build Table Preview Headers
+    const thEl = document.getElementById('tableHeaders');
+    thEl.innerHTML = '';
+    previewHeaders.forEach(k => {
+      const th = document.createElement('th');
+      th.textContent = k;
+      thEl.appendChild(th);
+    });
+
+    const tbEl = document.getElementById('tableBody');
+    tbEl.innerHTML = '';
+
+    // Process Rows
+    compiledRows.forEach(row => {
+      // Age Calc
+      let age = row['Age at Death'];
+      let m = String(age).match(/(\d+)y/i);
+      if (m && m[1]) { tAge += parseInt(m[1]); vAges++; }
+
+      // Stage Calc
+      let s = parseInt(row['Form Stage']) || 0;
+      if (s >= 1 && s <= 6) stg[s]++;
+      if (s === 6) stg6++;
+
+      // Preventable Check (Based on Assessor Comments or Category 4/5)
+      let cat = String(row['Assessor Death Category']);
+      if (cat === '4' || cat === '5') preventableCount++;
+
+      // Disease Types
+      if (row['Death Type: ACS (A)'] === 1) dx.acs++;
+      if (row['Death Type: Stroke (B)'] === 1) dx.stroke++;
+      if (row['Death Type: CKD (C)'] === 1) dx.ckd++;
+      if (row['Death Type: Pneumonia (D)'] === 1) dx.pneumo++;
+
+      // RCA Extraction (Hunting for the new "RCA " variables)
+      Object.keys(row).forEach(k => {
+        if (k.startsWith('RCA ') && !k.includes('Specify') && row[k] === 'Yes') {
+          let parts = k.split(': ');
+          if (parts.length === 2) {
+             let prefix = parts[0].split(' ')[1]; // Extract "Gen", "Pre", "Tx", etc.
+             let label = parts[1];
+             if (prefix === 'Other') label = row['RCA Other: Specify'] || 'Other (Unspecified)';
+             if (rcaCats[prefix]) {
+               rcaCats[prefix][label] = (rcaCats[prefix][label] || 0) + 1;
+             }
+          }
+        }
+      });
+
+      // Render Row
+      const tr = document.createElement('tr');
+      previewHeaders.forEach(k => {
+        const td = document.createElement('td');
+        let val = row[k];
+        if (val === '') val = '-';
+        td.innerHTML = val;
+        tr.appendChild(td);
+      });
+      tbEl.appendChild(tr);
+    });
+
+    // Update Metrics
+    const total = compiledRows.length;
+    document.getElementById('metricTotal').textContent = total;
+    document.getElementById('metricAvgAge').innerHTML = vAges > 0 ? `${(tAge/vAges).toFixed(1)}<span class="text-sm font-medium text-[var(--text-muted)] ml-2">yrs</span>` : '0.0';
+    document.getElementById('metricFinalized').innerHTML = `${stg6}<span class="text-sm font-medium text-[var(--text-muted)] ml-2">(${total > 0 ? Math.round((stg6/total)*100) : 0}%)</span>`;
+    document.getElementById('metricPreventable').innerHTML = `${preventableCount}<span class="text-sm font-medium text-[var(--text-muted)] ml-2">(${stg6 > 0 ? Math.round((preventableCount/stg6)*100) : 0}% of finalized)</span>`;
+
+    // Render Basic Charts
+    drawBar('chartDisease', [
+      { label: 'ACS / Cardiac', value: dx.acs, color: 'var(--danger)' },
+      { label: 'Stroke / Neuro', value: dx.stroke, color: 'var(--warning)' },
+      { label: 'CKD Stage 5', value: dx.ckd, color: 'var(--purple)' },
+      { label: 'Pneumonia', value: dx.pneumo, color: 'var(--success)' }
+    ], total);
+    
+    drawBar('chartStage', [
+      { label: 'Stg 1 (Coord)', value: stg[1], color: 'var(--border)' },
+      { label: 'Stg 2 (MO)', value: stg[2], color: 'var(--accent)' },
+      { label: 'Stg 3 (HOD)', value: stg[3], color: 'var(--warning)' },
+      { label: 'Stg 4 (Committee)', value: stg[4], color: 'var(--purple)' },
+      { label: 'Stg 5 (Assessor)', value: stg[5], color: 'var(--danger)' },
+      { label: 'Stg 6 (Finalized)', value: stg[6], color: 'var(--success)' }
+    ], total);
+
+    // Render Option B RCA Chart (Top Factor per Category)
+    const rcaCatNames = {
+      Gen: 'General Factors', Pre: 'Pre-Admission', Init: 'Initial Presentation',
+      Tx: 'Active Treatment', Inp: 'Inpatient Management', Other: 'Others'
+    };
+    const rcaCatColors = {
+      Gen: 'var(--text-muted)', Pre: 'var(--accent)', Init: 'var(--warning)',
+      Tx: 'var(--danger)', Inp: 'var(--purple)', Other: 'var(--success)'
+    };
+
+    let rcaHTML = '';
+    Object.keys(rcaCats).forEach(prefix => {
+      // Sort to find the highest occurring factor in this category
+      let entries = Object.entries(rcaCats[prefix]).sort((a,b)=>b[1]-a[1]);
+      
+      if (entries.length > 0) {
+        let topItem = entries[0];
+        let pct = stg6 > 0 ? Math.round((topItem[1] / stg6) * 100) : 0;
+        let barWidth = stg6 > 0 ? (topItem[1] / stg6) * 100 : 0;
+        barWidth = Math.max(barWidth, 2); // Minimum 2% width just so it's visible
+        
+        rcaHTML += `
+          <div class="mb-3">
+            <div class="text-[10px] font-bold text-[var(--text-muted)] uppercase mb-1 border-l-2 pl-2" style="border-color:${rcaCatColors[prefix]}">${rcaCatNames[prefix]}</div>
+            <div class="flex items-center gap-2 pl-2">
+              <div class="text-[11px] font-semibold text-[var(--text)] truncate flex-1" title="${topItem[0]}">${topItem[0]}</div>
+              <div class="w-20 h-[10px] bg-[var(--surface2)] rounded-full overflow-hidden flex-shrink-0">
+                <div class="h-full rounded-full transition-all duration-1000" style="width:${barWidth}%; background:${rcaCatColors[prefix]}"></div>
+              </div>
+              <div class="text-xs font-bold w-12 text-right">${topItem[1]} <span class="text-[9px] font-normal text-[var(--text-muted)]">(${pct}%)</span></div>
+            </div>
+          </div>
+        `;
+      }
+    });
+
+    if (!rcaHTML) rcaHTML = '<div class="text-sm text-[var(--text-muted)] italic">No contributory factors recorded yet.</div>';
+    document.getElementById('chartRCA').innerHTML = rcaHTML;
+  }
+
+  function drawBar(id, data, total) {
+    const el = document.getElementById(id);
+    el.innerHTML = '';
+    const max = Math.max(...data.map(d => d.value), 1);
+    data.forEach(d => {
+      const pct = (d.value / max) * 100;
+      const absPct = total > 0 ? Math.round((d.value / total) * 100) : 0;
+      el.innerHTML += `
+        <div class="bar-container">
+          <div class="bar-label" title="${d.label}">${d.label}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+          <div class="text-xs font-bold w-14 text-right flex-shrink-0 text-[var(--text)]">${d.value} <span class="text-[9px] font-normal text-[var(--text-muted)]">(${absPct}%)</span></div>
+        </div>`;
+    });
+  }
+
+  // ── CSV EXPORT ──
+  function exportMasterCSV() {
+    if (!compiledRows.length) return;
+    
+    // Grab headers dynamically from the massive standardized object
+    const headers = Object.keys(compiledRows[0]);
+    let csv = '\uFEFF' + headers.map(k => `"${k.replace(/"/g, '""')}"`).join(",") + "\n";
+    
+    compiledRows.forEach(row => {
+      let r = headers.map(k => {
+        let v = row[k];
+        if (v === undefined || v === null) return '""';
+        v = String(v).replace(/\n|\r/g, ' ').replace(/"/g, '""');
+        return `"${v}"`;
+      });
+      csv += r.join(",") + "\n";
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `NIMMR_Consolidated_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast(`Master CSV Exported successfully!`);
+  }
+</script>
+</body>
+</html>
