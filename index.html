@@ -253,7 +253,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
       <input type="file" id="file-load-startup" accept=".nimmr,.json" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1b &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1c &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -574,8 +574,8 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         <div class="form-group w-third" id="ethnicity-other-group" style="display:none;"><label>Specify Ethnicity</label><input type="text" id="ethnicity-other" placeholder="Specify..."></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Body Weight (kg)</label><input type="number" id="weight" step="0.1" min="0" oninput="calcBMI()"></div>
-        <div class="form-group w-quarter"><label>Height (m)</label><input type="number" id="height" step="0.01" min="0" oninput="calcBMI()"></div>
+        <div class="form-group w-quarter"><label>Body Weight (kg) - estimate if not available</label><input type="number" id="weight" step="0.1" min="0" oninput="calcBMI()"></div>
+        <div class="form-group w-quarter"><label>Height (m) - estimate if not available</label><input type="number" id="height" step="0.01" min="0" oninput="calcBMI()"></div>
         <div class="form-group w-quarter"><label>BMI (kg/m²) <span class="hint">(auto)</span></label><input type="text" id="bmi" readonly></div>
       </div>
       <hr class="divider">
@@ -832,15 +832,15 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-card">
       <span class="sub-section-title">6.1 Vital Signs on First Encounter</span>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Systolic BP (mmHg)</label><input type="number" id="sbp"></div>
-        <div class="form-group w-quarter"><label>Diastolic BP (mmHg)</label><input type="number" id="dbp"></div>
-        <div class="form-group w-quarter"><label>Pulse Rate (bpm)</label><input type="number" id="pr"></div>
-        <div class="form-group w-quarter"><label>Blood Glucose (mmol/L)</label><input type="number" id="bg" step="0.1"></div>
+        <div class="form-group w-quarter"><label>Systolic BP (mmHg)</label><input type="text" id="sbp" placeholder="e.g. 120 or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Diastolic BP (mmHg)</label><input type="text" id="dbp" placeholder="e.g. 80 or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Pulse Rate (bpm)</label><input type="text" id="pr" placeholder="e.g. 90 or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Blood Glucose (mmol/L)</label><input type="text" id="bg" placeholder="e.g. 6.5 or NA" oninput="validateNumOrNA(this)"></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Respiration Rate (/min)</label><input type="number" id="rr"></div>
-        <div class="form-group w-quarter"><label>Temperature (°C)</label><input type="number" id="temp" step="0.1"></div>
-        <div class="form-group w-quarter"><label>SpO2 (%) on Room Air</label><input type="number" id="spo2" step="0.1" min="0" max="100"></div>
+        <div class="form-group w-quarter"><label>Respiration Rate (/min)</label><input type="text" id="rr" placeholder="e.g. 18 or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Temperature (°C)</label><input type="text" id="temp" placeholder="e.g. 37.5 or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>SpO2 (%) on Room Air</label><input type="text" id="spo2" placeholder="e.g. 98 or NA" oninput="validateNumOrNA(this)"></div>
       </div>
       <hr class="divider">
       <span class="sub-section-title">GCS at Presentation</span>
@@ -907,19 +907,19 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="section-band"><h2>7.0 Investigations</h2><div class="badge">ALL CASES</div></div>
     <div class="form-card">
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Hb (g/dL)</label><input type="text" id="inv-hb" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
-        <div class="form-group w-quarter"><label>WBC (10⁹/L)</label><input type="text" id="inv-wbc" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
-        <div class="form-group w-quarter"><label>Platelet (10⁹/L)</label><input type="text" id="inv-plt" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
-        <div class="form-group w-quarter"><label>Urea (mmol/L)</label><input type="text" id="inv-urea" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>Hb (g/dL)</label><input type="text" id="inv-hb" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>WBC (10⁹/L)</label><input type="text" id="inv-wbc" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Platelet (10⁹/L)</label><input type="text" id="inv-plt" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>Urea (mmol/L)</label><input type="text" id="inv-urea" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Creatinine (µmol/L)</label><input type="text" id="inv-creat" pattern="^(\d+(\.\d+)?|NA|Not Available)$" oninput="calcEGFR()" placeholder="Value or NA"></div>
-        <div class="form-group w-quarter"><label>Potassium (mmol/L)</label><input type="text" id="inv-k" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
-        <div class="form-group w-quarter"><label>HCO3 (mmol/L)</label><input type="text" id="inv-hco3" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>Creatinine (µmol/L)</label><input type="text" id="inv-creat" placeholder="Value or NA" oninput="validateNumOrNA(this);calcEGFR()"></div>
+        <div class="form-group w-quarter"><label>Potassium (mmol/L)</label><input type="text" id="inv-k" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
+        <div class="form-group w-quarter"><label>HCO3 (mmol/L)</label><input type="text" id="inv-hco3" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
         <div class="form-group w-quarter"><label>eGFR (mL/min/1.73m²) <span class="hint">(auto)</span></label><input type="text" id="inv-egfr" readonly placeholder="Auto"></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>LDL-C (mmol/L)</label><input type="text" id="inv-ldl" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>LDL-C (mmol/L)</label><input type="text" id="inv-ldl" placeholder="Value or NA" oninput="validateNumOrNA(this)"></div>
       </div>
     </div>
     <!-- ═══ PART B — ACS ═══ -->
@@ -941,13 +941,14 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         </div>
         <div class="form-row">
           <div class="form-group w-half">
-            <label>ACS Onset</label>
-            <div class="check-group" style="margin-bottom:4px;">
-              <label class="check-item"><input type="radio" name="acs-onset-known" value="Known" onchange="document.getElementById('acs-onset-date').disabled=false"> Known</label>
-              <label class="check-item"><input type="radio" name="acs-onset-known" value="Unknown" onchange="document.getElementById('acs-onset-date').disabled=true"> Unknown</label>
-            </div>
-            <input type="date" id="acs-onset-date" disabled>
+        <div class="form-group w-half">
+          <label>ACS Onset</label>
+          <div class="check-group" style="margin-bottom:4px;">
+            <label class="check-item"><input type="radio" name="acs-onset-known" value="Known" onchange="toggleACSOnset(true)"> Known</label>
+            <label class="check-item"><input type="radio" name="acs-onset-known" value="Unknown" onchange="toggleACSOnset(false)"> Unknown</label>
           </div>
+          <input type="date" id="acs-onset-date" style="display:none;">
+        </div>
           <div class="form-group w-quarter"><label>Onset Time (24h)</label><input type="time" id="acs-onset-time"></div>
           <div class="form-group w-quarter"><label>Date of Presentation</label><input type="date" id="acs-presentation-date"></div>
         </div>
@@ -2119,6 +2120,18 @@ function submitCoordSign(){
   const pwd=document.getElementById('coord-password').value;
   const code=getDeathCode();
   const err=document.getElementById('coord-sign-error');
+
+  // --- NEW: CRITICAL FIELD VALIDATION ---
+  const reqIds = ['resp-name', 'state', 'hospital-name', 'ic-number', 'death-date'];
+  for (let id of reqIds) {
+    if (!document.getElementById(id).value.trim()) {
+      err.textContent = '❌ Missing Required Fields: Please complete Respondent Name, State, Hospital, IC, and Death Date before signing.';
+      err.style.display = 'block';
+      return;
+    }
+  }
+  // --------------------------------------
+
   if(!name){err.textContent='❌ Please enter coordinator name.';err.style.display='block';return;}
   if(!pwd){err.textContent='❌ Please set a password.';err.style.display='block';return;}
   if(!code){err.textContent='❌ Please select at least one death type.';err.style.display='block';return;}
@@ -2195,7 +2208,22 @@ function submitMOSign(){
   const desig=document.getElementById('mo-designation').value.trim();
   const cat=document.getElementById('mo-death-cat').value;
   const err=document.getElementById('mo-sign-error');
+
+  // --- NEW: NARRATIVE & CATEGORY VALIDATION ---
+  if (!document.getElementById('narrative').value.trim()) {
+    err.textContent = '❌ Please write the Narrative Report before signing.';
+    err.style.display = 'block';
+    return;
+  }
+  if (!cat) {
+    err.textContent = '❌ Please select a Death Category (1-8).';
+    err.style.display = 'block';
+    return;
+  }
+  // --------------------------------------------
+
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
+  if(!desig){err.textContent='❌ Please enter designation.';err.style.display='block';return;}
   if(isSigEmpty('mo-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('mo-canvas');
@@ -2216,6 +2244,7 @@ function submitHODSign(){
   const cat=document.getElementById('hod-death-cat').value;
   const err=document.getElementById('hod-sign-error');
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
+  if(!cat){err.textContent='❌ Please select a Death Category (1-8).';err.style.display='block';return;}
   const wc=comments.split(/\s+/).filter(Boolean).length;
   if(wc<10||wc>50){err.textContent='❌ Comments must be 10–50 words.';err.style.display='block';return;}
   const impWc=imp.split(/\s+/).filter(Boolean).length;
@@ -2266,6 +2295,7 @@ function submitAssessorSign(){
   const comments=document.getElementById('assessor-comments').value.trim();
   const err=document.getElementById('assessor-sign-error');
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
+  if(!cat){err.textContent='❌ Please select a Death Category (1-8).';err.style.display='block';return;}
   if(isSigEmpty('assessor-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('assessor-canvas');
@@ -2306,6 +2336,15 @@ function updateStageDisplay(title,desc){
   document.getElementById('status-stage-text').textContent=title;
   document.getElementById('status-desc').textContent=desc;
 }
+// ── VITAL SIGN / INVESTIGATION VALIDATION ──
+function validateNumOrNA(el) {
+  const val = el.value.trim();
+  if (val === '' || val.toUpperCase() === 'NA') { el.style.borderColor = ''; el.style.boxShadow = ''; return; }
+  if (/^-?\d+(\.\d+)?$/.test(val)) { el.style.borderColor = ''; el.style.boxShadow = ''; return; }
+  el.style.borderColor = 'var(--danger-light)';
+  el.style.boxShadow = '0 0 0 2px rgba(192,57,43,0.15)';
+}
+
 // ── GCS / TIMI ──
 function updateGCS(){
   const eEl=document.getElementById('gcs-e'), vEl=document.getElementById('gcs-v'), mEl=document.getElementById('gcs-m'), tEl=document.getElementById('gcs-t');
@@ -2319,6 +2358,16 @@ function updateGCS(){
 }
 function calcTIMI(){let s=0;for(let i=1;i<=7;i++){if(document.getElementById('timi-'+i).checked)s++;}document.getElementById('timi-total').textContent=s;}
 // ── TOGGLES ──
+function toggleACSOnset(known) {
+  const el = document.getElementById('acs-onset-date');
+  if (known) {
+    el.style.display = '';      // Reveal the date picker
+  } else {
+    el.style.display = 'none';  // Hide it
+    el.value = '';              // Clear the value — this is the Safari fix
+  }
+}
+
 function toggleACSType(){
   const v=document.querySelector('input[name=acs-spectrum]:checked')?.value;
   document.getElementById('acs-stemi-section').style.display=v==='STEMI'?'block':'none';
@@ -2675,8 +2724,14 @@ async function saveFormJSON(){
   const blob=new Blob([encryptedString],{type:'application/octet-stream'});
   const url=URL.createObjectURL(blob);
   const linkAnchor=document.createElement('a');
+  const _now=new Date();
+  const _dd=String(_now.getDate()).padStart(2,'0');
+  const _mm=String(_now.getMonth()+1).padStart(2,'0');
+  const _yy=String(_now.getFullYear()).slice(-2);
+  const _stg=formState.stage||0;
+  const _base=formState.caseCode||'NIMMR_DRAFT';
   linkAnchor.href=url;
-  linkAnchor.download=(formState.caseCode||'NIMMR_DRAFT')+'.nimmr';
+  linkAnchor.download=`${_base}-(${_dd}-${_mm}-${_yy} stage${_stg}).nimmr`;
   linkAnchor.click();
   URL.revokeObjectURL(url);
   markSaved();
@@ -2702,6 +2757,7 @@ function loadFormFile(event){
         return;
       }
       restoreForm(data);
+      applyAnonymisationLocks(data);
       closeModal('load-modal');
       document.getElementById('startup-modal').classList.remove('open');
       document.getElementById('main-content').style.display='block';
@@ -3023,6 +3079,45 @@ formState.realData = {}; // Clear previous memory
 function markSaved(){const el=document.getElementById('save-indicator');el.textContent='● Saved';el.className='saved';}
 function markUnsaved(){const el=document.getElementById('save-indicator');el.textContent='● Unsaved';el.className='';}
 document.addEventListener('input',markUnsaved);document.addEventListener('change',markUnsaved);
+
+
+
+// ── ANONYMISATION SECURITY CHECKPOINT ──
+function applyAnonymisationLocks(data) {
+  // Inline decoder so this function has no dependency on restoreForm's local scope
+  const _dec = (val) => { try { return (val && typeof val === 'string' && val.startsWith('B64:')) ? decodeURIComponent(escape(atob(val.substring(4)))) : val; } catch(e) { return val; } };
+
+  const checkAndLock = [
+    { id: 'hospital-name', val: data.basicInfo?.hospitalName },
+    { id: 'ic-number', val: data.basicInfo?.icNumber },
+    { id: 'resp-name', val: data.respondent?.name },
+    { id: 'resp-desig', val: data.respondent?.designation },
+    { id: 'resp-contact', val: data.respondent?.contact },
+    { id: 'resp-email', val: data.respondent?.email },
+    { id: 'mo-name', val: data.signatures?.mo?.name },
+    { id: 'hod-name', val: data.signatures?.hod?.name }
+  ];
+
+  checkAndLock.forEach(field => {
+    if (field.val && typeof field.val === 'string' && field.val.startsWith('B64:')) {
+      // FIX: Decode before storing — prevents double-encoding on re-save
+      formState.realData[field.id] = _dec(field.val);
+
+      // Lock down the UI so it doesn't corrupt the data or show gibberish
+      const el = document.getElementById(field.id);
+      if (el) {
+        if (el.tagName === 'SELECT') {
+          let opt = document.createElement('option');
+          opt.value = 'Anonymised';
+          opt.text = 'Anonymised (Locked)';
+          el.add(opt);
+        }
+        el.value = 'Anonymised';
+        el.disabled = true;
+      }
+    }
+  });
+}
 
 document.addEventListener('DOMContentLoaded',()=>{resetFormUI();filterHospitals();updateGCS();});
 </script>
