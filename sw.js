@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nimmr-offline-v4';
+const CACHE_NAME = 'nimmr-offline-v5';
 
 // Add the exact filenames of your project here.
 // If you have other files (like the consolidator), add them to this list.
