@@ -348,9 +348,19 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <h3>✍️ MO / Specialist Signature</h3>
     <div class="form-group" style="margin-bottom:.75rem;"><label class="required">Full Name</label><input type="text" id="mo-name" placeholder="Full name"></div>
     <div class="form-group" style="margin-bottom:.75rem;"><label class="required">Designation</label><input type="text" id="mo-designation" placeholder="e.g. Medical Officer / Specialist Internal Medicine"></div>
-    <div class="form-group" style="margin-bottom:.75rem;">
-      <label>Death Category (1–8)</label>
-      <select id="mo-death-cat"><option value="">Select...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+<div class="form-group" style="margin-bottom:.75rem;">
+      <label for="mo-death-cat">Death Category (1–8)</label>
+      <select id="mo-death-cat" name="mo-death-cat">
+        <option value="">Select...</option>
+        <option value="1">1 - Delayed diagnosis or medical management factors</option>
+        <option value="2">2 - Disease progression despite appropriate care</option>
+        <option value="3">3 - Treatment or procedural complications</option>
+        <option value="4">4 - High-risk mortality (severe illness, frailty, comorbidities)</option>
+        <option value="5">5 - Unexpected death in patient expected to recover</option>
+        <option value="6">6 - Uncertain cause due to insufficient information</option>
+        <option value="7">7 - Pre-admission factors or delayed presentation</option>
+        <option value="8">8 - Expected death in end-stage or palliative care</option>
+      </select>
     </div>
     <div class="form-group" style="margin-bottom:.75rem;">
       <label>Digital Signature</label>
@@ -378,7 +388,16 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     </div>
     <div class="form-group" style="margin-bottom:.75rem;">
       <label>Death Category (1–8)</label>
-      <select id="hod-death-cat"><option value="">Select...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+      <select id="hod-death-cat"><option value="">Select...</option>
+        <option value="1">1 - Delayed diagnosis or medical management factors</option>
+        <option value="2">2 - Disease progression despite appropriate care</option>
+        <option value="3">3 - Treatment or procedural complications</option>
+        <option value="4">4 - High-risk mortality (severe illness, frailty, comorbidities)</option>
+        <option value="5">5 - Unexpected death in patient expected to recover</option>
+        <option value="6">6 - Uncertain cause due to insufficient information</option>
+        <option value="7">7 - Pre-admission factors or delayed presentation</option>
+        <option value="8">8 - Expected death in end-stage or palliative care</option>
+      </select>
     </div>
     <div class="form-group" style="margin-bottom:.75rem;">
       <label>Digital Signature</label>
@@ -418,7 +437,16 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-group" style="margin-bottom:.75rem;"><label class="required">Assessor Name</label><input type="text" id="assessor-name" placeholder="Full name"></div>
     <div class="form-group" style="margin-bottom:.75rem;">
       <label>Death Category (1–8)</label>
-      <select id="assessor-death-cat"><option value="">Select...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+      <select id="assessor-death-cat"><option value="">Select...</option>
+        <option value="1">1 - Delayed diagnosis or medical management factors</option>
+        <option value="2">2 - Disease progression despite appropriate care</option>
+        <option value="3">3 - Treatment or procedural complications</option>
+        <option value="4">4 - High-risk mortality (severe illness, frailty, comorbidities)</option>
+        <option value="5">5 - Unexpected death in patient expected to recover</option>
+        <option value="6">6 - Uncertain cause due to insufficient information</option>
+        <option value="7">7 - Pre-admission factors or delayed presentation</option>
+        <option value="8">8 - Expected death in end-stage or palliative care</option>
+      </select>
     </div>
     <div class="form-group" style="margin-bottom:.75rem;"><label>Comments (10–50 words)</label><textarea id="assessor-comments" rows="3" placeholder="Clinical impression..."></textarea></div>
     <div class="form-group" style="margin-bottom:.75rem;">
@@ -526,9 +554,9 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
           <span class="hint">12-digit MyKad or Military/Police ID</span>
         </div>
         <div class="form-group w-quarter"><label>Date of Birth <span class="hint">(auto/manual)</span></label><input type="date" id="dob" onchange="calcAge(this.value)"></div>
-        <div class="form-group w-quarter">
+	<div class="form-group w-quarter">
           <label>Gender <span class="hint">(auto/manual)</span></label>
-          <select id="gender">
+          <select id="gender" onchange="calcEGFR()">
             <option value="">— Select —</option>
             <option>Male</option>
             <option>Female</option>
@@ -879,22 +907,21 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="section-band"><h2>7.0 Investigations</h2><div class="badge">ALL CASES</div></div>
     <div class="form-card">
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Hb (g/dL)</label><input type="number" id="inv-hb" step="0.1"></div>
-        <div class="form-group w-quarter"><label>WBC (10⁹/L)</label><input type="number" id="inv-wbc" step="0.1"></div>
-        <div class="form-group w-quarter"><label>Platelet (10⁹/L)</label><input type="number" id="inv-plt"></div>
-        <div class="form-group w-quarter"><label>Urea (mmol/L)</label><input type="number" id="inv-urea" step="0.1"></div>
+        <div class="form-group w-quarter"><label>Hb (g/dL)</label><input type="text" id="inv-hb" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>WBC (10⁹/L)</label><input type="text" id="inv-wbc" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>Platelet (10⁹/L)</label><input type="text" id="inv-plt" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>Urea (mmol/L)</label><input type="text" id="inv-urea" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>Creatinine (µmol/L)</label><input type="number" id="inv-creat"></div>
-        <div class="form-group w-quarter"><label>Potassium (mmol/L)</label><input type="number" id="inv-k" step="0.1"></div>
-        <div class="form-group w-quarter"><label>HCO3 (mmol/L)</label><input type="number" id="inv-hco3" step="0.1"></div>
-        <div class="form-group w-quarter"><label>eGFR (mL/min/1.73m²)</label><input type="number" id="inv-egfr"></div>
+        <div class="form-group w-quarter"><label>Creatinine (µmol/L)</label><input type="text" id="inv-creat" pattern="^(\d+(\.\d+)?|NA|Not Available)$" oninput="calcEGFR()" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>Potassium (mmol/L)</label><input type="text" id="inv-k" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>HCO3 (mmol/L)</label><input type="text" id="inv-hco3" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
+        <div class="form-group w-quarter"><label>eGFR (mL/min/1.73m²) <span class="hint">(auto)</span></label><input type="text" id="inv-egfr" readonly placeholder="Auto"></div>
       </div>
       <div class="form-row">
-        <div class="form-group w-quarter"><label>LDL-C (mmol/L)</label><input type="number" id="inv-ldl" step="0.1"></div>
+        <div class="form-group w-quarter"><label>LDL-C (mmol/L)</label><input type="text" id="inv-ldl" pattern="^(\d+(\.\d+)?|NA|Not Available)$" placeholder="Value or NA"></div>
       </div>
     </div>
-
     <!-- ═══ PART B — ACS ═══ -->
     <div id="part-acs-section" class="part-section">
       <div class="section-band" style="border-left-color:var(--danger-light);"><h2>Part B — ACS-Related Death</h2><div class="badge" style="border-color:var(--danger-light);color:var(--danger-light);">ACS CASES</div></div>
@@ -1288,7 +1315,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
           </div>
         </div>
         <hr class="divider">
-        <span class="sub-section-title">KRT Counselling</span>
+        <span class="sub-section-title">Kidney Replacement Therapy (KRT) Counselling</span>
         <div class="form-row">
           <div class="form-group w-third">
             <label>KRT Counselling Done?</label>
@@ -1990,6 +2017,7 @@ function parseIC(){
     document.getElementById('gender').value=parseInt(icClean[11])%2===1 ? 'Male' : 'Female';
   }
   updateCodePreview();
+  calcEGFR(); // Trigger eGFR update when IC auto-fills gender/age
 }
 function calcAge(dob){
   if(!dob)return;
@@ -1999,11 +2027,42 @@ function calcAge(dob){
   let y=death.getFullYear()-birth.getFullYear(),m=death.getMonth()-birth.getMonth(),d=death.getDate()-birth.getDate();
   if(d<0){m--;d+=30;}if(m<0){y--;m+=12;}
   document.getElementById('age-at-death').value=`${y}y ${m}m ${d}d`;
+  calcEGFR(); // Trigger eGFR update when age changes
 }
 function calcBMI(){
   const w=parseFloat(document.getElementById('weight').value),h=parseFloat(document.getElementById('height').value);
   if(w>0&&h>0)document.getElementById('bmi').value=(w/(h*h)).toFixed(1);
 }
+
+function calcEGFR() {
+  const creatUmol = parseFloat(document.getElementById('inv-creat').value);
+  const gender = document.getElementById('gender').value;
+  const ageStr = document.getElementById('age-at-death').value;
+  
+  // Extract age integer from string (e.g. "45y 2m" -> 45)
+  let age = NaN;
+  if (ageStr) { const match = ageStr.match(/(\d+)/); if (match) age = parseInt(match[1]); }
+
+  const egfrInput = document.getElementById('inv-egfr');
+  
+  // Stop if missing data or pediatric patient
+  if (!creatUmol || !gender || isNaN(age) || age < 18) { egfrInput.value = ''; return; }
+
+  const cr = creatUmol / 88.4; // Convert µmol/L to mg/dL
+  const isFemale = gender === 'Female';
+  const kappa = isFemale ? 0.7 : 0.9;
+  const alpha = isFemale ? -0.241 : -0.302;
+  const genderMultiplier = isFemale ? 1.012 : 1;
+
+  const minCrK = Math.min(cr / kappa, 1);
+  const maxCrK = Math.max(cr / kappa, 1);
+
+  // CKD-EPI 2021 Formula
+  const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * Math.pow(0.9938, age) * genderMultiplier;
+  
+  egfrInput.value = Math.round(egfr);
+}
+
 // ── DEATH TYPE & CODE ──
 function updateDeathTypes(){
   ['acs','stroke','ckd','pneumo'].forEach(t=>{
