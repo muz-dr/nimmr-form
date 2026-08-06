@@ -263,7 +263,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
 <input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.5 &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.6 &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -515,7 +515,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         <label class="required">Designation</label>
         <select id="resp-desig" data-req="coord" data-req-label="Designation">
           <option value="">Select...</option>
-          <option>Consultant</option><option>Specialist</option><option>Medical Officer</option><option>Others</option>
+          <option>Consultant</option><option>Specialist</option><option>Medical Officer</option><option>Matron/Sister/SN</option><option>Assistant Medical Officer</option><option>Others</option>
         </select>
       </div>
     </div>
@@ -750,9 +750,9 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="form-card">
       <div class="form-row">
         <div class="form-group w-full">
-          <label class="check-item" style="margin-bottom:.4rem;"><input type="checkbox" id="comorbid-no-info"> No information available</label>
           <label>Co-morbidities <span class="hint">(select all that apply)</span></label>
           <div class="check-group">
+			<label class="check-item"><input type="checkbox" id="comorbid-no-info"> No information available</label>
             <label class="check-item"><input type="checkbox" id="cm-none"> None</label>
             <label class="check-item"><input type="checkbox" id="cm-ihd"> IHD</label>
             <label class="check-item"><input type="checkbox" id="cm-obesity"> Obesity</label>
@@ -775,9 +775,9 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <hr class="divider">
       <div class="form-row">
         <div class="form-group w-full">
-          <label class="check-item" style="margin-bottom:.4rem;"><input type="checkbox" id="rf-no-info"> No information available</label>
           <label>Risk Factors <span class="hint">(select all that apply)</span></label>
           <div class="check-group">
+			<label class="check-item"><input type="checkbox" id="rf-no-info"> No information available</label>
             <label class="check-item"><input type="checkbox" id="rf-none"> None</label>
             <label class="check-item"><input type="checkbox" id="rf-smoking"> Smoking</label>
             <label class="check-item"><input type="checkbox" id="rf-vaping"> Vaping</label>
@@ -1283,7 +1283,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div id="part-ckd-section" class="part-section">
       <div class="section-band" style="border-left-color:#9b59b6;"><h2>Part D — CKD Stage 5 Related Death</h2><div class="badge" style="border-color:#9b59b6;color:#b27fe8;">CKD CASES</div></div>
       <div class="form-card">
-               <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--danger-light);">Specific Disease-Related Exclusion Criteria (IF The patient doesn't have a PRE-EXISTING CKD Stage 5 or the CKD stage 5 was attributed to AKI, Sk)</strong>
+               <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--danger-light);">Specific Disease-Related Exclusion Criteria (IF The patient doesn't have a PRE-EXISTING CKD Stage 5 or the CKD stage 5 was attributed to AKI, DO NOT FILL THE CKD SECTION)</strong>
         <div class="form-row">
           <div class="form-group w-half"><label>Pre-existing CKD Stage 5?</label><div class="check-group"><label class="check-item"><input type="radio" name="pre-ckd5" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="pre-ckd5" value="No"> No</label></div></div>
           <div class="form-group w-half"><label>Acute Kidney Injury Without Pre-existing CKD Stage 5?</label><div class="check-group"><label class="check-item"><input type="radio" name="aki-no-ckd5" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="aki-no-ckd5" value="No"> No</label></div></div>
