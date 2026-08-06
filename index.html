@@ -263,7 +263,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
 <input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.6 &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1m &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -2530,6 +2530,7 @@ function collectAllData(){
       onsetKnown:gr('acs-onset-known'),onsetDate:gv('acs-onset-date'),onsetTime:gv('acs-onset-time'),presentationDate:gv('acs-presentation-date'),
       troponin:gv('troponin'),ckmb:gv('ckmb'),ccuAdmit:gr('ccu-admit'),ccuNoReason:gr('ccu-no-reason'),
       timiScore:gv('timi-total')||document.getElementById('timi-total')?.textContent||'0',
+      timi1:gc('timi-1'), timi2:gc('timi-2'), timi3:gc('timi-3'), timi4:gc('timi-4'), timi5:gc('timi-5'), timi6:gc('timi-6'), timi7:gc('timi-7'),
       nstemi:{ap_aspirin:gc('nap-aspirin'),ap_clopi:gc('nap-clopi'),ap_tica:gc('nap-tica'),ap_ticlo:gc('nap-ticlo'),ap_gp:gc('nap-gp'),ap_contra:gc('nap-contra'),ap_none:gc('nap-none'),ap_other:gc('nap-other'),ap_otherText:gv('nap-other-text'),ac_fondap:gc('nac-fondap'),ac_lmwh:gc('nac-lmwh'),ac_ufh:gc('nac-ufh'),ac_contra:gc('nac-contra'),ac_none:gc('nac-none'),ac_other:gc('nac-other'),ac_otherText:gv('nac-other-text'),statin:gr('nstemi-statin'),ace:gr('nstemi-ace'),bb:gr('nstemi-bb'),cath:gr('nstemi-cath'),pci:gr('nstemi-pci')},
       stemi:{killip:gr('killip'),fibrinGiven:gr('fibrin-given'),fibrinType:gv('fibrin-type'),d2n:gv('d2n'),fn_ppci:gc('fn-primary-pci'),fn_12hHosp:gc('fn-12h-hosp'),fn_12hPt:gc('fn-12h-pt'),fn_contra:gc('fn-contra'),fn_consent:gc('fn-consent'),fn_otherText:gv('fn-other-text'),cath:gr('stemi-cath'),pci:gr('stemi-pci'),d2b:gv('d2b'),ap_aspirin:gc('sap-aspirin'),ap_clopi:gc('sap-clopi'),ap_tica:gc('sap-tica'),ap_ticlo:gc('sap-ticlo'),ap_gp:gc('sap-gp'),ap_contra:gc('sap-contra'),ap_none:gc('sap-none'),ap_other:gc('sap-other'),ap_otherText:gv('sap-other-text'),ac_fondap:gc('sac-fondap'),ac_lmwh:gc('sac-lmwh'),ac_ufh:gc('sac-ufh'),ac_contra:gc('sac-contra'),ac_none:gc('sac-none'),ac_other:gc('sac-other'),ac_otherText:gv('sac-other-text'),statin:gr('stemi-statin'),ace:gr('stemi-ace'),bb:gr('stemi-bb')}
     }:null,
@@ -2664,9 +2665,10 @@ function exportAllCSV(){
     // ACS
     'ACS: Diagnosis Date':acs.diagDate||'','ACS: Spectrum':acs.spectrum||'',
     'ACS: Onset Known':acs.onsetKnown||'','ACS: Onset Date':acs.onsetDate||'','ACS: Onset Time':acs.onsetTime||'',
-    'ACS: Presentation Date':acs.presentationDate||'','ACS: Troponin':acs.troponin||'','ACS: CKMB/CK':acs.ckmb||'',
+'ACS: Presentation Date':acs.presentationDate||'','ACS: Troponin':acs.troponin||'','ACS: CKMB/CK':acs.ckmb||'',
     'ACS: CCU Admitted':acs.ccuAdmit||'','ACS: CCU Not Admitted Reason':acs.ccuNoReason||'',
     'ACS: TIMI Score':acs.timiScore||'',
+    'TIMI: Age >65':acs.timi1?'Yes':'No', 'TIMI: >3 risk factors':acs.timi2?'Yes':'No', 'TIMI: ASA use':acs.timi3?'Yes':'No', 'TIMI: Known CAD':acs.timi4?'Yes':'No', 'TIMI: >2 angina <24h':acs.timi5?'Yes':'No', 'TIMI: ST changes':acs.timi6?'Yes':'No', 'TIMI: Elev markers':acs.timi7?'Yes':'No',
     'NSTEMI: Anti-platelet Aspirin':acs.nstemi?.ap_aspirin?'Yes':'','NSTEMI: Anti-platelet Clopidogrel':acs.nstemi?.ap_clopi?'Yes':'',
     'NSTEMI: Anti-platelet Ticagrelor':acs.nstemi?.ap_tica?'Yes':'','NSTEMI: Anti-platelet Ticlopidine':acs.nstemi?.ap_ticlo?'Yes':'',
     'NSTEMI: Anti-platelet GP Inhibitor':acs.nstemi?.ap_gp?'Yes':'','NSTEMI: Anti-platelet Contraindicated':acs.nstemi?.ap_contra?'Yes':'',
@@ -2680,7 +2682,7 @@ function exportAllCSV(){
     'STEMI: Fibrinolytic Type':acs.stemi?.fibrinType||'','STEMI: Door to Needle (mins)':acs.stemi?.d2n||'',
     'STEMI: No Fibrinolytic - PPCI':acs.stemi?.fn_ppci?'Yes':'','STEMI: No Fibrinolytic - >12h Hospital':acs.stemi?.fn_12hHosp?'Yes':'',
     'STEMI: No Fibrinolytic - >12h Patient':acs.stemi?.fn_12hPt?'Yes':'','STEMI: No Fibrinolytic - Contraindicated':acs.stemi?.fn_contra?'Yes':'',
-    'STEMI: No Fibrinolytic - Not Consented':acs.stemi?.fn_consent?'Yes':'',
+    'STEMI: No Fibrinolytic - Not Consented':acs.stemi?.fn_consent?'Yes':'','STEMI: No Fibrinolytic - Other Text':acs.stemi?.fn_otherText||'',
     'STEMI: Cardiac Catheterisation':acs.stemi?.cath||'','STEMI: PCI Type':acs.stemi?.pci||'','STEMI: Door to Balloon (mins)':acs.stemi?.d2b||'',
     'STEMI: Anti-platelet Aspirin':acs.stemi?.ap_aspirin?'Yes':'','STEMI: Anti-platelet Clopidogrel':acs.stemi?.ap_clopi?'Yes':'',
     'STEMI: Anti-platelet Ticagrelor':acs.stemi?.ap_tica?'Yes':'','STEMI: Anti-platelet Ticlopidine':acs.stemi?.ap_ticlo?'Yes':'',
@@ -2699,14 +2701,14 @@ function exportAllCSV(){
     'Stroke: Thrombolysis':st.thrombolysis||'','Stroke: Thrombolysis Not Done - Out of Window':st.tnr_window?'Yes':'',
     'Stroke: Thrombolysis Not Done - Wake-up':st.tnr_wakeup?'Yes':'','Stroke: Thrombolysis Not Done - Contraindicated':st.tnr_contra?'Yes':'',
     'Stroke: Thrombolysis Not Done - Not Consented':st.tnr_consent?'Yes':'','Stroke: Thrombolysis Not Done - Service NA':st.tnr_service?'Yes':'',
-    'Stroke: Thrombolysis Not Done - Mild Deficit':st.tnr_mild?'Yes':'','Stroke: Thrombolysis Not Done - Only Thrombectomy':st.tnr_thrombectomy?'Yes':'',
+    'Stroke: Thrombolysis Not Done - Mild Deficit':st.tnr_mild?'Yes':'','Stroke: Thrombolysis Not Done - Only Thrombectomy':st.tnr_thrombectomy?'Yes':'','Stroke: Thrombolysis Not Done - Other Text':st.tnr_otherText||'',
     'Stroke: Thrombectomy':st.thrombectomy||'','Stroke: Thrombectomy Not Done - Out of Window':st.thr_window?'Yes':'',
-    'Stroke: Thrombectomy Not Done - In-House NA':st.thr_inhouse?'Yes':'','Stroke: Thrombectomy Not Done - Cluster NA':st.thr_cluster?'Yes':'',
+    'Stroke: Thrombectomy Not Done - In-House NA':st.thr_inhouse?'Yes':'','Stroke: Thrombectomy Not Done - Cluster NA':st.thr_cluster?'Yes':'','Stroke: Thrombectomy Not Done - Contraindicated':st.thr_contra?'Yes':'','Stroke: Thrombectomy Not Done - Not Consented':st.thr_consent?'Yes':'','Stroke: Thrombectomy Not Done - Other Text':st.thr_otherText||'',
     'Stroke: Neurosurgery Referral':st.neuroRef||'','Stroke: Neurosurgical Intervention':st.neuroInterv||'',
-    'Stroke: Complication - Pneumonia':st.comp_pneumonia?'Yes':'','Stroke: Complication - UTI':st.comp_uti?'Yes':'',
+    'Stroke: Complication - None':st.comp_none?'Yes':'','Stroke: Complication - Pneumonia':st.comp_pneumonia?'Yes':'','Stroke: Complication - UTI':st.comp_uti?'Yes':'',
     'Stroke: Complication - Recurrence':st.comp_recurrence?'Yes':'','Stroke: Complication - DVT':st.comp_dvt?'Yes':'',
     'Stroke: Complication - Seizure':st.comp_seizure?'Yes':'','Stroke: Complication - PE':st.comp_pe?'Yes':'',
-    'Stroke: Complication - Delirium':st.comp_delirium?'Yes':'','Stroke: Complication - Pressure Sore':st.comp_pressure?'Yes':'',
+    'Stroke: Complication - Insertion Site Infection':st.comp_insertion?'Yes':'','Stroke: Complication - Delirium':st.comp_delirium?'Yes':'','Stroke: Complication - Pressure Sore':st.comp_pressure?'Yes':'','Stroke: Complication - Other Text':st.comp_otherText||'',
     // CKD
     'CKD: Pre-existing CKD Stage 5':ckd.preCkd5||'','CKD: AKI Without CKD5':ckd.akiNoCkd5||'',
     'CKD: On Dialysis':ckd.dialysis||'','CKD: Dialysis Duration (years)':ckd.dialysisYrs||'','CKD: Dialysis Duration (months)':ckd.dialysisMths||'',
@@ -2717,22 +2719,22 @@ function exportAllCSV(){
     'CKD: Inpatient Nephrology Referral':ckd.inpNephro||'','CKD: Dialysis Indicated':ckd.dialysisInd||'',
     'CKD: Dialysis Reason - Uraemia':ckd.dir_uraemia?'Yes':'','CKD: Dialysis Reason - Electrolyte':ckd.dir_electrolyte?'Yes':'',
     'CKD: Dialysis Reason - Acidosis':ckd.dir_acidosis?'Yes':'','CKD: Dialysis Reason - Fluid Overload':ckd.dir_fluid?'Yes':'',
-    'CKD: Dialysis Reason - Routine':ckd.dir_routine?'Yes':'','CKD: Inpatient Dialysis Done':ckd.inpDialysisDone||'',
-    'CKD: Dialysis Not Done - Haemodynamically Unstable':ckd.dndr_unstable?'Yes':'','CKD: Dialysis Not Done - Access Difficulty':ckd.dndr_access?'Yes':'','CKD: Dialysis Not Done - Not Consented':ckd.dndr_consent?'Yes':'',
+    'CKD: Dialysis Reason - Routine':ckd.dir_routine?'Yes':'','CKD: Dialysis Reason - Other Text':ckd.dir_otherText||'','CKD: Inpatient Dialysis Done':ckd.inpDialysisDone||'',
+    'CKD: Dialysis Not Done - Haemodynamically Unstable':ckd.dndr_unstable?'Yes':'','CKD: Dialysis Not Done - Access Difficulty':ckd.dndr_access?'Yes':'','CKD: Dialysis Not Done - Not Consented':ckd.dndr_consent?'Yes':'','CKD: Dialysis Not Done - Other Text':ckd.dndr_otherText||'',
     'CKD: Time Decision to Dialysis (hours)':ckd.decisionToDialysis||'',
     'CKD: CRBSI':ckd.crbsi||'','CKD: CRBSI Blood Culture':ckd.crbsiCulture||'','CKD: CRBSI Organism':ckd.crbsiOrganism||'',
     'CKD: PD Peritonitis':ckd.pdPeritonitis||'','CKD: PD Culture':ckd.pdCulture||'','CKD: PD Organism':ckd.pdOrganism||'',
     // PNEUMONIA
     'Pneumonia: CXR':pn.imgCXR||'','Pneumonia: CT Thorax':pn.imgCT||'','Pneumonia: US Lungs':pn.imgUS||'',
     'Pneumonia: Formal CXR Report Done':pn.cxrFormalReport||'',
-    'Pneumonia: CXR - Infiltrate':pn.cxr_infil?'Yes':'','Pneumonia: CXR - Consolidation':pn.cxr_consol?'Yes':'',
-    'Pneumonia: CXR - Cavitation':pn.cxr_cavit?'Yes':'','Pneumonia: CXR - Pleural Effusion':pn.cxr_effusion?'Yes':'',
-'Pneumonia: Symptom - Fever':pn.sx_fever||'','Pneumonia: Symptom - Cough':pn.sx_cough||'','Pneumonia: Symptom - Dyspnoea':pn.sx_dyspnea||'','Pneumonia: Symptom - Chest Pain':pn.sx_chest||'',
+ 'Pneumonia: CXR - Infiltrate':pn.cxr_infil?'Yes':'','Pneumonia: CXR - Consolidation':pn.cxr_consol?'Yes':'',
+    'Pneumonia: CXR - Cavitation':pn.cxr_cavit?'Yes':'','Pneumonia: CXR - Pleural Effusion':pn.cxr_effusion?'Yes':'','Pneumonia: CXR - Other Text':pn.cxr_otherText||'',
+    'Pneumonia: Symptom - Fever':pn.sx_fever||'','Pneumonia: Symptom - Cough':pn.sx_cough||'','Pneumonia: Symptom - Dyspnoea':pn.sx_dyspnea||'','Pneumonia: Symptom - Chest Pain':pn.sx_chest||'',
     'Pneumonia: Sign - RR >20':pn.sg_rr||'','Pneumonia: Sign - Temp >37.5':pn.sg_temp||'','Pneumonia: Sign - Crepitation':pn.sg_crep||'',
     'Pneumonia: Sign - Bronchial Breath Sound':pn.sg_bronch||'','Pneumonia: Sign - SpO2 <95%':pn.sg_spo2||'',
     'Pneumonia: Onset':pn.onset||'',
-    'Pneumonia: Culture - Blood':pn.cx_blood?'Yes':'','Pneumonia: Culture - Respiratory':pn.cx_resp?'Yes':'',
-    'Pneumonia: Culture Result':pn.cultureResult||'','Pneumonia: Culture Organism':pn.cultureOrganism||'',
+    'Pneumonia: Culture - Blood':pn.cx_blood?'Yes':'','Pneumonia: Culture - Respiratory':pn.cx_resp?'Yes':'','Pneumonia: Culture - Not Sent':pn.cx_none?'Yes':'','Pneumonia: Culture - Other Type Text':pn.cx_otherType||'',
+'Pneumonia: Culture Result':pn.cultureResult||'','Pneumonia: Culture Organism':pn.cultureOrganism||'','Pneumonia: Culture Organism Other':pn.cultureOrganismOther||'',
     'Pneumonia: RDT Result':pn.rdt||'','Pneumonia: RDT Specify':pn.rdtSpecify||'',
     'Pneumonia: Influenza Test':pn.fluTest||'','Pneumonia: COVID-19 Test':pn.covidTest||'',
     'Pneumonia: Antibiotic Given':pn.abxGiven||'','Pneumonia: Antibiotic Within 1 Hour':pn.abxWithin1h||'',
@@ -3016,6 +3018,7 @@ formState.realData = {}; // Clear previous memory
   sr('acs-onset-known', acs.onsetKnown); s('acs-onset-date', acs.onsetDate); s('acs-onset-time', acs.onsetTime);
   s('acs-presentation-date', acs.presentationDate); s('troponin', acs.troponin); s('ckmb', acs.ckmb);
   sr('ccu-admit', acs.ccuAdmit); sr('ccu-no-reason', acs.ccuNoReason);
+  sc('timi-1', acs.timi1); sc('timi-2', acs.timi2); sc('timi-3', acs.timi3); sc('timi-4', acs.timi4); sc('timi-5', acs.timi5); sc('timi-6', acs.timi6); sc('timi-7', acs.timi7); calcTIMI();
   if (acs.nstemi) {
     sc('nap-aspirin', acs.nstemi.ap_aspirin); sc('nap-clopi', acs.nstemi.ap_clopi);
     sc('nap-tica', acs.nstemi.ap_tica); sc('nap-ticlo', acs.nstemi.ap_ticlo); sc('nap-gp', acs.nstemi.ap_gp); sc('nap-contra', acs.nstemi.ap_contra); sc('nap-none', acs.nstemi.ap_none); sc('nap-other', acs.nstemi.ap_other); s('nap-other-text', acs.nstemi.ap_otherText);
@@ -3026,6 +3029,7 @@ formState.realData = {}; // Clear previous memory
   if (acs.stemi) {
     sr('killip', acs.stemi.killip); sr('fibrin-given', acs.stemi.fibrinGiven);
     s('fibrin-type', acs.stemi.fibrinType); s('d2n', acs.stemi.d2n);
+    sc('fn-primary-pci', acs.stemi.fn_ppci); sc('fn-12h-hosp', acs.stemi.fn_12hHosp); sc('fn-12h-pt', acs.stemi.fn_12hPt); sc('fn-contra', acs.stemi.fn_contra); sc('fn-consent', acs.stemi.fn_consent); s('fn-other-text', acs.stemi.fn_otherText);
     sc('sap-aspirin', acs.stemi.ap_aspirin); sc('sap-clopi', acs.stemi.ap_clopi); sc('sap-tica', acs.stemi.ap_tica); sc('sap-ticlo', acs.stemi.ap_ticlo); sc('sap-gp', acs.stemi.ap_gp); sc('sap-contra', acs.stemi.ap_contra); sc('sap-none', acs.stemi.ap_none); sc('sap-other', acs.stemi.ap_other); s('sap-other-text', acs.stemi.ap_otherText);
     sc('sac-fondap', acs.stemi.ac_fondap); sc('sac-lmwh', acs.stemi.ac_lmwh); sc('sac-ufh', acs.stemi.ac_ufh); sc('sac-contra', acs.stemi.ac_contra); sc('sac-none', acs.stemi.ac_none); sc('sac-other', acs.stemi.ac_other); s('sac-other-text', acs.stemi.ac_otherText);
     sr('stemi-cath', acs.stemi.cath); sr('stemi-pci', acs.stemi.pci); s('d2b', acs.stemi.d2b);
@@ -3039,16 +3043,26 @@ formState.realData = {}; // Clear previous memory
   sr('stroke-onset-type', st.onsetType); s('stroke-onset-date', st.onsetDate); s('stroke-onset-time', st.onsetTime);
   s('stroke-lastseen-date', st.lastSeenDate); s('stroke-lastseen-time', st.lastSeenTime);
   s('nihss', st.nihss); sr('asu', st.asu);
-  sr('thrombolysis', st.thrombolysis); sr('thrombectomy', st.thrombectomy);
+  sr('thrombolysis', st.thrombolysis);
+  sc('tnr-window', st.tnr_window); sc('tnr-wakeup', st.tnr_wakeup); sc('tnr-contra', st.tnr_contra); sc('tnr-consent', st.tnr_consent); sc('tnr-service', st.tnr_service); sc('tnr-mild', st.tnr_mild); sc('tnr-thrombectomy', st.tnr_thrombectomy); s('tnr-other-text', st.tnr_otherText);
+  sr('thrombectomy', st.thrombectomy);
+  sc('thr-window', st.thr_window); sc('thr-inhouse', st.thr_inhouse); sc('thr-cluster', st.thr_cluster); sc('thr-contra', st.thr_contra); sc('thr-consent', st.thr_consent); s('thr-other-text', st.thr_otherText);
   sr('neuro-ref', st.neuroRef); sr('neuro-interv', st.neuroInterv);
-  sc('psc-pneumonia', st.comp_pneumonia); sc('psc-uti', st.comp_uti); sc('psc-dvt', st.comp_dvt);
+  sc('psc-none', st.comp_none); sc('psc-pneumonia', st.comp_pneumonia); sc('psc-uti', st.comp_uti); sc('psc-recurrence', st.comp_recurrence); sc('psc-dvt', st.comp_dvt); sc('psc-seizure', st.comp_seizure); sc('psc-pe', st.comp_pe); sc('psc-insertion', st.comp_insertion); sc('psc-delirium', st.comp_delirium); sc('psc-pressure', st.comp_pressure); s('psc-other-text', st.comp_otherText);
 
-  // CKD
+// CKD
   const ckd = data.ckd || {};
   sr('pre-ckd5', ckd.preCkd5); sr('aki-no-ckd5', ckd.akiNoCkd5); sr('ckd-dialysis', ckd.dialysis);
   s('dialysis-yrs', ckd.dialysisYrs); s('dialysis-mths', ckd.dialysisMths); sr('krt-mod', ckd.krtMod);
-  sr('nephro-ref', ckd.nephroRef); sr('nephro-fu', ckd.nephroFU); sr('inp-nephro', ckd.inpNephro);
-  sr('dialysis-ind', ckd.dialysisInd); sr('inp-dialysis-done', ckd.inpDialysisDone);
+  sr('nephro-ref', ckd.nephroRef); sr('nephro-fu', ckd.nephroFU); s('nephro-fu-yrs', ckd.nephroFUYrs); s('nephro-fu-mths', ckd.nephroFUMths);
+  sr('krt-counselling', ckd.krtCounselling); sr('krt-outcome', ckd.krtOutcome); sr('krt-agreed-type', ckd.krtAgreedType); sr('krt-refused-reason', ckd.krtRefusedReason);
+  sr('kt-counselling', ckd.ktCounselling); sr('kt-planned', ckd.ktPlanned); s('kt-not-planned-reason', ckd.ktNotPlannedReason);
+  sr('inp-nephro', ckd.inpNephro);
+  sr('dialysis-ind', ckd.dialysisInd);
+  sc('dir-uraemia', ckd.dir_uraemia); sc('dir-electrolyte', ckd.dir_electrolyte); sc('dir-acidosis', ckd.dir_acidosis); sc('dir-fluid', ckd.dir_fluid); sc('dir-routine', ckd.dir_routine); s('dir-other-text', ckd.dir_otherText);
+  sr('inp-dialysis-done', ckd.inpDialysisDone);
+  sc('dndr-unstable', ckd.dndr_unstable); sc('dndr-access', ckd.dndr_access); sc('dndr-consent', ckd.dndr_consent); s('dndr-other-text', ckd.dndr_otherText);
+  s('decision-to-dialysis', ckd.decisionToDialysis);
   sr('crbsi', ckd.crbsi); sr('crbsi-culture', ckd.crbsiCulture); s('crbsi-organism', ckd.crbsiOrganism);
   sr('pd-peritonitis', ckd.pdPeritonitis); sr('pd-culture', ckd.pdCulture);
 
@@ -3056,12 +3070,13 @@ formState.realData = {}; // Clear previous memory
   const pn = data.pneumonia || {};
   sr('img-cxr', pn.imgCXR); sr('img-ct', pn.imgCT); sr('img-us', pn.imgUS);
   sr('cxr-formal-report', pn.cxrFormalReport);
-  sc('cxr-infil', pn.cxr_infil); sc('cxr-consol', pn.cxr_consol);
+  sc('cxr-infil', pn.cxr_infil); sc('cxr-consol', pn.cxr_consol); sc('cxr-cavit', pn.cxr_cavit); sc('cxr-effusion', pn.cxr_effusion); s('cxr-other-text', pn.cxr_otherText);
   sr('sx-fever', pn.sx_fever); sr('sx-cough', pn.sx_cough); sr('sx-dyspnea', pn.sx_dyspnea); sr('sx-chest', pn.sx_chest);
   sr('sg-rr', pn.sg_rr); sr('sg-temp', pn.sg_temp); sr('sg-crep', pn.sg_crep); sr('sg-bronch', pn.sg_bronch); sr('sg-spo2', pn.sg_spo2);
   sr('pneumo-onset', pn.onset);
-  sr('culture-result', pn.cultureResult); s('culture-organism-select', pn.cultureOrganism);
-  sr('rdt', pn.rdt); sr('flu-test', pn.fluTest); sr('covid-test', pn.covidTest);
+  sc('cx-blood', pn.cx_blood); sc('cx-resp', pn.cx_resp); s('cx-other-type-text', pn.cx_otherType); sc('cx-none', pn.cx_none);
+  sr('culture-result', pn.cultureResult); s('culture-organism-select', pn.cultureOrganism); s('culture-organism-other', pn.cultureOrganismOther);
+  sr('rdt', pn.rdt); s('rdt-specify', pn.rdtSpecify); sr('flu-test', pn.fluTest); sr('covid-test', pn.covidTest);
   sr('abx-given', pn.abxGiven); sr('abx-1h', pn.abxWithin1h);
   
   sc('abx-unasyn',pn.abx_unasyn); sc('abx-augmentin',pn.abx_augmentin); sc('abx-ceftriaxone',pn.abx_ceftriaxone);
