@@ -263,7 +263,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
 <input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1 &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.3 &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -1523,27 +1523,22 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
           </div>
         </div>
         <hr class="divider">
-        <span class="sub-section-title">Clinical Findings</span>
+<span class="sub-section-title">Clinical Findings — Symptoms</span>
         <div class="form-row">
-          <div class="form-group">
-            <label>Symptoms Supporting Diagnosis</label>
-            <div class="check-group">
-              <label class="check-item"><input type="checkbox" id="sx-fever"> Fever</label>
-              <label class="check-item"><input type="checkbox" id="sx-cough"> Cough</label>
-              <label class="check-item"><input type="checkbox" id="sx-dyspnea"> Dyspnoea</label>
-              <label class="check-item"><input type="checkbox" id="sx-chest"> Chest Pain</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Signs Supporting Diagnosis</label>
-            <div class="check-group">
-              <label class="check-item"><input type="checkbox" id="sg-rr"> RR &gt;20 breaths/min</label>
-              <label class="check-item"><input type="checkbox" id="sg-temp"> Temp &gt;37.5°C</label>
-              <label class="check-item"><input type="checkbox" id="sg-crep"> Crepitation</label>
-              <label class="check-item"><input type="checkbox" id="sg-bronch"> Bronchial Breath Sound</label>
-              <label class="check-item"><input type="checkbox" id="sg-spo2"> SpO2 &lt;95% on Room Air</label>
-            </div>
-          </div>
+          <div class="form-group w-quarter"><label>Fever</label><div class="check-group"><label class="check-item"><input type="radio" name="sx-fever" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sx-fever" value="No"> No</label><label class="check-item"><input type="radio" name="sx-fever" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-quarter"><label>Cough</label><div class="check-group"><label class="check-item"><input type="radio" name="sx-cough" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sx-cough" value="No"> No</label><label class="check-item"><input type="radio" name="sx-cough" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-quarter"><label>Dyspnoea</label><div class="check-group"><label class="check-item"><input type="radio" name="sx-dyspnea" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sx-dyspnea" value="No"> No</label><label class="check-item"><input type="radio" name="sx-dyspnea" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-quarter"><label>Chest Pain</label><div class="check-group"><label class="check-item"><input type="radio" name="sx-chest" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sx-chest" value="No"> No</label><label class="check-item"><input type="radio" name="sx-chest" value="No Information"> No Info</label></div></div>
+        </div>
+        <span class="sub-section-title">Clinical Findings — Signs</span>
+        <div class="form-row">
+          <div class="form-group w-third"><label>RR &gt;20 breaths/min</label><div class="check-group"><label class="check-item"><input type="radio" name="sg-rr" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sg-rr" value="No"> No</label><label class="check-item"><input type="radio" name="sg-rr" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-third"><label>Temp &gt;37.5°C</label><div class="check-group"><label class="check-item"><input type="radio" name="sg-temp" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sg-temp" value="No"> No</label><label class="check-item"><input type="radio" name="sg-temp" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-third"><label>Crepitation</label><div class="check-group"><label class="check-item"><input type="radio" name="sg-crep" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sg-crep" value="No"> No</label><label class="check-item"><input type="radio" name="sg-crep" value="No Information"> No Info</label></div></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group w-half"><label>Bronchial Breath Sound</label><div class="check-group"><label class="check-item"><input type="radio" name="sg-bronch" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sg-bronch" value="No"> No</label><label class="check-item"><input type="radio" name="sg-bronch" value="No Information"> No Info</label></div></div>
+          <div class="form-group w-half"><label>SpO2 &lt;95% on Room Air</label><div class="check-group"><label class="check-item"><input type="radio" name="sg-spo2" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="sg-spo2" value="No"> No</label><label class="check-item"><input type="radio" name="sg-spo2" value="No Information"> No Info</label></div></div>
         </div>
         <div class="form-row">
           <div class="form-group w-half">
@@ -2567,8 +2562,8 @@ function collectAllData(){
       imgCXR:gr('img-cxr'),imgCT:gr('img-ct'),imgUS:gr('img-us'),
       cxrFormalReport:gr('cxr-formal-report'),
       cxr_infil:gc('cxr-infil'),cxr_consol:gc('cxr-consol'),cxr_cavit:gc('cxr-cavit'),cxr_effusion:gc('cxr-effusion'),cxr_otherText:gv('cxr-other-text'),
-      sx_fever:gc('sx-fever'),sx_cough:gc('sx-cough'),sx_dyspnea:gc('sx-dyspnea'),sx_chest:gc('sx-chest'),
-      sg_rr:gc('sg-rr'),sg_temp:gc('sg-temp'),sg_crep:gc('sg-crep'),sg_bronch:gc('sg-bronch'),sg_spo2:gc('sg-spo2'),
+	sx_fever:gr('sx-fever'),sx_cough:gr('sx-cough'),sx_dyspnea:gr('sx-dyspnea'),sx_chest:gr('sx-chest'),
+      sg_rr:gr('sg-rr'),sg_temp:gr('sg-temp'),sg_crep:gr('sg-crep'),sg_bronch:gr('sg-bronch'),sg_spo2:gr('sg-spo2'),
       onset:gr('pneumo-onset'),
       cx_blood:gc('cx-blood'),cx_resp:gc('cx-resp'),cx_otherType:gv('cx-other-type-text'),cx_none:gc('cx-none'),
       cultureResult:gr('culture-result'),cultureOrganism:gv('culture-organism-select'),cultureOrganismOther:gv('culture-organism-other'),
@@ -2732,9 +2727,9 @@ function exportAllCSV(){
     'Pneumonia: Formal CXR Report Done':pn.cxrFormalReport||'',
     'Pneumonia: CXR - Infiltrate':pn.cxr_infil?'Yes':'','Pneumonia: CXR - Consolidation':pn.cxr_consol?'Yes':'',
     'Pneumonia: CXR - Cavitation':pn.cxr_cavit?'Yes':'','Pneumonia: CXR - Pleural Effusion':pn.cxr_effusion?'Yes':'',
-    'Pneumonia: Symptom - Fever':pn.sx_fever?'Yes':'','Pneumonia: Symptom - Cough':pn.sx_cough?'Yes':'','Pneumonia: Symptom - Dyspnoea':pn.sx_dyspnea?'Yes':'','Pneumonia: Symptom - Chest Pain':pn.sx_chest?'Yes':'',
-    'Pneumonia: Sign - RR >20':pn.sg_rr?'Yes':'','Pneumonia: Sign - Temp >37.5':pn.sg_temp?'Yes':'','Pneumonia: Sign - Crepitation':pn.sg_crep?'Yes':'',
-    'Pneumonia: Sign - Bronchial Breath Sound':pn.sg_bronch?'Yes':'','Pneumonia: Sign - SpO2 <95%':pn.sg_spo2?'Yes':'',
+'Pneumonia: Symptom - Fever':pn.sx_fever||'','Pneumonia: Symptom - Cough':pn.sx_cough||'','Pneumonia: Symptom - Dyspnoea':pn.sx_dyspnea||'','Pneumonia: Symptom - Chest Pain':pn.sx_chest||'',
+    'Pneumonia: Sign - RR >20':pn.sg_rr||'','Pneumonia: Sign - Temp >37.5':pn.sg_temp||'','Pneumonia: Sign - Crepitation':pn.sg_crep||'',
+    'Pneumonia: Sign - Bronchial Breath Sound':pn.sg_bronch||'','Pneumonia: Sign - SpO2 <95%':pn.sg_spo2||'',
     'Pneumonia: Onset':pn.onset||'',
     'Pneumonia: Culture - Blood':pn.cx_blood?'Yes':'','Pneumonia: Culture - Respiratory':pn.cx_resp?'Yes':'',
     'Pneumonia: Culture Result':pn.cultureResult||'','Pneumonia: Culture Organism':pn.cultureOrganism||'',
@@ -3051,13 +3046,13 @@ formState.realData = {}; // Clear previous memory
   sr('crbsi', ckd.crbsi); sr('crbsi-culture', ckd.crbsiCulture); s('crbsi-organism', ckd.crbsiOrganism);
   sr('pd-peritonitis', ckd.pdPeritonitis); sr('pd-culture', ckd.pdCulture);
 
-  // Pneumonia
+// Pneumonia
   const pn = data.pneumonia || {};
   sr('img-cxr', pn.imgCXR); sr('img-ct', pn.imgCT); sr('img-us', pn.imgUS);
   sr('cxr-formal-report', pn.cxrFormalReport);
   sc('cxr-infil', pn.cxr_infil); sc('cxr-consol', pn.cxr_consol);
-  sc('sx-fever', pn.sx_fever); sc('sx-cough', pn.sx_cough);
-  sc('sg-rr', pn.sg_rr); sc('sg-temp', pn.sg_temp); sc('sg-crep', pn.sg_crep);
+  sr('sx-fever', pn.sx_fever); sr('sx-cough', pn.sx_cough); sr('sx-dyspnea', pn.sx_dyspnea); sr('sx-chest', pn.sx_chest);
+  sr('sg-rr', pn.sg_rr); sr('sg-temp', pn.sg_temp); sr('sg-crep', pn.sg_crep); sr('sg-bronch', pn.sg_bronch); sr('sg-spo2', pn.sg_spo2);
   sr('pneumo-onset', pn.onset);
   sr('culture-result', pn.cultureResult); s('culture-organism-select', pn.cultureOrganism);
   sr('rdt', pn.rdt); sr('flu-test', pn.fluTest); sr('covid-test', pn.covidTest);
