@@ -192,7 +192,17 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 .narrative-area{font-size:.85rem;min-height:140px;}
 #save-indicator{font-size:.7rem;color:var(--text-dim);display:flex;align-items:center;gap:4px;}
 #save-indicator.saved{color:var(--success);}
+/* AFTER — add the new rules immediately below it: */
 .sub-section-title{font-size:.82rem;font-weight:700;display:block;margin:.75rem 0 .4rem;color:var(--text-muted);}
+
+/* Central validation states */
+.field-error{border-color:var(--danger-light)!important;box-shadow:0 0 0 2px rgba(192,57,43,0.18)!important;}
+.req-radio-error{outline:2px solid var(--danger-light);border-radius:4px;padding:3px 6px;}
+/* Word counters */
+.word-counter{font-size:.68rem;margin-top:2px;transition:color .2s;}
+.word-counter.wc-ok{color:var(--success);}
+.word-counter.wc-err{color:var(--danger-light);}
+.word-counter.wc-neutral{color:var(--text-dim);}
 
 /* RCA Table Styling */
 .rca-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: .5rem; }
@@ -251,9 +261,9 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div style="display:flex;flex-direction:column;gap:.75rem;">
       <button class="btn btn-primary" style="padding:.75rem;font-size:.9rem;" onclick="closeStartup('new')">📋 New Form</button>
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
-      <input type="file" id="file-load-startup" accept=".nimmr,.json" style="display:none" onchange="loadFormFile(event)">
+<input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1c &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.1 &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -261,7 +271,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
 <div class="modal-overlay" id="load-modal">
   <div class="modal" style="max-width:400px;">
     <h3>📂 Load Form</h3>
-    <input type="file" id="load-file-input" accept=".nimmr,.json" style="width:100%;margin-bottom:1rem;" onchange="loadFormFile(event)">
+<input type="file" id="load-file-input" accept=".nimmr,.json,text/plain,application/json,*/*" style="width:100%;margin-bottom:1rem;" onchange="loadFormFile(event)">
     <div class="modal-actions"><button class="btn" onclick="closeModal('load-modal')">Cancel</button></div>
   </div>
 </div>
@@ -448,7 +458,11 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         <option value="8">8 - Expected death in end-stage or palliative care</option>
       </select>
     </div>
-    <div class="form-group" style="margin-bottom:.75rem;"><label>Comments (10–50 words)</label><textarea id="assessor-comments" rows="3" placeholder="Clinical impression..."></textarea></div>
+    <div class="form-group" style="margin-bottom:.75rem;">
+      <label>Comments (10–50 words)</label>
+      <textarea id="assessor-comments" rows="3" placeholder="Clinical impression..." oninput="updateWordCounter('assessor-comments','assessor-comments-wc',10,50)"></textarea>
+      <span class="hint word-counter wc-neutral" id="assessor-comments-wc">0 words (10–50 required)</span>
+    </div>
     <div class="form-group" style="margin-bottom:.75rem;">
       <label>Digital Signature</label>
       <div class="sig-container"><div class="sig-canvas-wrap"><canvas class="sig-pad" id="assessor-canvas" height="120"></canvas></div><div class="sig-controls"><button class="btn btn-sm" onclick="clearSig('assessor-canvas')">Clear</button></div></div>
@@ -496,18 +510,18 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
   <div class="form-card" id="respondent-form-card">
     <div class="info-banner" style="margin-bottom:.75rem;">Information on the person who fill up the form.</div>
     <div class="form-row">
-      <div class="form-group w-half"><label class="required">Name of Respondent</label><input type="text" id="resp-name"></div>
+      <div class="form-group w-half"><label class="required">Name of Respondent</label><input type="text" id="resp-name" data-req="coord" data-req-label="Respondent Name"></div>
       <div class="form-group w-half">
         <label class="required">Designation</label>
-        <select id="resp-desig">
+        <select id="resp-desig" data-req="coord" data-req-label="Designation">
           <option value="">Select...</option>
           <option>Consultant</option><option>Specialist</option><option>Medical Officer</option><option>Others</option>
         </select>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group w-half"><label class="required">Contact Number</label><input type="text" id="resp-contact"></div>
-      <div class="form-group w-half"><label class="required">Email Address</label><input type="text" id="resp-email"></div>
+<div class="form-row">
+      <div class="form-group w-half"><label class="required">Contact Number</label><input type="text" id="resp-contact" data-req="coord" data-req-label="Contact Number"></div>
+      <div class="form-group w-half"><label class="required">Email Address</label><input type="text" id="resp-email" data-req="coord" data-req-label="Email Address"></div>
     </div>
   </div>
 
@@ -518,7 +532,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <div class="form-row">
         <div class="form-group w-quarter">
           <label class="required">State</label>
-          <select id="state" onchange="filterHospitals()">
+          <select id="state" onchange="filterHospitals()" data-req="coord" data-req-label="State">
             <option value="">— Select —</option>
             <option>Johor</option>
             <option>Kedah</option>
@@ -539,7 +553,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         </div>
         <div class="form-group w-half">
           <label class="required">Name of Hospital</label>
-          <select id="hospital-name" onchange="showHospitalInfo()"><option value="">— Select Hospital —</option></select>
+          <select id="hospital-name" onchange="showHospitalInfo()" data-req="coord" data-req-label="Hospital Name"><option value="">— Select Hospital —</option></select>
           <div id="hosp-info-badge" style="font-size:.7rem;color:var(--accent-light);font-weight:bold;margin-top:4px;"></div>
         </div>
         <div class="form-group w-quarter">
@@ -550,7 +564,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <div class="form-row">
         <div class="form-group w-half">
           <label class="required">Identity Card Number (MyKad)</label>
-          <input type="text" id="ic-number" maxlength="20" placeholder="e.g. 900101145678 or T12345" oninput="parseIC()">
+          <input type="text" id="ic-number" maxlength="20" placeholder="e.g. 900101145678 or T12345" oninput="parseIC()" data-req="coord" data-req-label="IC Number">
           <span class="hint">12-digit MyKad or Military/Police ID</span>
         </div>
         <div class="form-group w-quarter"><label>Date of Birth <span class="hint">(auto/manual)</span></label><input type="date" id="dob" onchange="calcAge(this.value)"></div>
@@ -587,14 +601,14 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         <div class="form-group w-half"><label>Admission to Ward — Date</label><input type="date" id="admission-date"></div>
         <div class="form-group w-quarter"><label>Time (24h)</label><input type="time" id="admission-time"></div>
       </div>
-      <div class="form-row">
-        <div class="form-group w-half"><label class="required">Death — Date</label><input type="date" id="death-date" oninput="updateCodePreview();calcAge(document.getElementById('dob').value);"></div>
-        <div class="form-group w-quarter"><label class="required">Death — Time (24h)</label><input type="time" id="death-time"></div>
+<div class="form-row">
+        <div class="form-group w-half"><label class="required">Death — Date</label><input type="date" id="death-date" oninput="updateCodePreview();calcAge(document.getElementById('dob').value);" data-req="coord" data-req-label="Death Date"></div>
+        <div class="form-group w-quarter"><label class="required">Death — Time (24h)</label><input type="time" id="death-time" data-req="coord" data-req-label="Death Time"></div>
       </div>
       <div class="form-row">
         <div class="form-group w-full">
           <label class="required">Place of Death</label>
-          <div class="check-group">
+          <div class="check-group" data-req-radio="coord" data-radio-name="place-death" data-req-label="Place of Death">
             <label class="check-item"><input type="radio" name="place-death" value="Medical Ward"> Medical Ward</label>
             <label class="check-item"><input type="radio" name="place-death" value="Medical Beds in Multidisciplinary Ward"> Medical Beds in Multidisciplinary Ward</label>
             <label class="check-item"><input type="radio" name="place-death" value="Medical HDW"> Medical HDW</label>
@@ -603,8 +617,8 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
           </div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group w-full"><label class="required">Cause of Death</label><input type="text" id="cause-of-death" placeholder="Enter primary cause of death"></div>
+<div class="form-row">
+        <div class="form-group w-full"><label class="required">Cause of Death</label><input type="text" id="cause-of-death" placeholder="Enter primary cause of death" data-req="coord" data-req-label="Cause of Death"></div>
       </div>
       <div class="form-row">
         <div class="form-group w-half"><label>Date of Form Issued</label><input type="date" id="form-issued-date"></div>
@@ -941,14 +955,13 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         </div>
         <div class="form-row">
           <div class="form-group w-half">
-        <div class="form-group w-half">
-          <label>ACS Onset</label>
-          <div class="check-group" style="margin-bottom:4px;">
-            <label class="check-item"><input type="radio" name="acs-onset-known" value="Known" onchange="toggleACSOnset(true)"> Known</label>
-            <label class="check-item"><input type="radio" name="acs-onset-known" value="Unknown" onchange="toggleACSOnset(false)"> Unknown</label>
+            <label>ACS Onset</label>
+            <div class="check-group" style="margin-bottom:4px;">
+              <label class="check-item"><input type="radio" name="acs-onset-known" value="Known" onchange="toggleACSOnset(true)"> Known</label>
+              <label class="check-item"><input type="radio" name="acs-onset-known" value="Unknown" onchange="toggleACSOnset(false)"> Unknown</label>
+            </div>
+            <input type="date" id="acs-onset-date" style="display:none;">
           </div>
-          <input type="date" id="acs-onset-date" style="display:none;">
-        </div>
           <div class="form-group w-quarter"><label>Onset Time (24h)</label><input type="time" id="acs-onset-time"></div>
           <div class="form-group w-quarter"><label>Date of Presentation</label><input type="date" id="acs-presentation-date"></div>
         </div>
@@ -1270,6 +1283,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div id="part-ckd-section" class="part-section">
       <div class="section-band" style="border-left-color:#9b59b6;"><h2>Part D — CKD Stage 5 Related Death</h2><div class="badge" style="border-color:#9b59b6;color:#b27fe8;">CKD CASES</div></div>
       <div class="form-card">
+               <strong style="font-size:0.82rem;display:block;margin-bottom:0.5rem;color:var(--danger-light);">Specific Disease-Related Exclusion Criteria (IF The patient doesn't have a PRE-EXISTING CKD Stage 5 or the CKD stage 5 was attributed to AKI, Sk)</strong>
         <div class="form-row">
           <div class="form-group w-half"><label>Pre-existing CKD Stage 5?</label><div class="check-group"><label class="check-item"><input type="radio" name="pre-ckd5" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="pre-ckd5" value="No"> No</label></div></div>
           <div class="form-group w-half"><label>Acute Kidney Injury Without Pre-existing CKD Stage 5?</label><div class="check-group"><label class="check-item"><input type="radio" name="aki-no-ckd5" value="Yes"> Yes</label><label class="check-item"><input type="radio" name="aki-no-ckd5" value="No"> No</label></div></div>
@@ -1631,7 +1645,11 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
     <div class="section-band"><h2>Part F — Narrative Report</h2><div class="badge">MO / SPECIALIST</div></div>
     <div class="form-card">
       <div class="info-banner">Provide a summary of the sequence of events leading to and contributing to death. Include: (a) Presenting signs and symptoms; (b) Factors that led to deterioration and death. <strong>DO NOT write names of hospitals or persons involved.</strong></div>
-      <div class="form-group"><label class="required">Narrative</label><textarea class="narrative-area" id="narrative" placeholder="Write narrative here..."></textarea></div>
+      <div class="form-group">
+        <label class="required">Narrative</label>
+        <textarea class="narrative-area" id="narrative" placeholder="Write narrative here..." data-req="mo" data-req-label="Narrative Report" oninput="updateWordCounter('narrative','narrative-wc',50,null)"></textarea>
+        <span class="hint word-counter wc-neutral" id="narrative-wc">0 words (min 50 recommended)</span>
+      </div>
       
       <div class="form-row" style="margin-top:.75rem;">
         <div class="form-group w-half">
@@ -1673,8 +1691,11 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
         </div>
       </div>
     </div>
-    <div id="hod-sign-btn" style="margin-top:1rem;display:flex;gap:.75rem;align-items:center;">
-      <button class="btn btn-gold" style="font-size:.9rem;padding:.6rem 1.5rem;" onclick="openModal('hod-sign-modal')">✍️ HOD — Sign &amp; Lock Form</button>
+    <div id="hod-sign-btn" style="margin-top:1rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+      <div id="hod-waiting-notice" style="font-size:.8rem;color:var(--text-muted);padding:.5rem 1rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--warning);border-radius:0 5px 5px 0;">
+        ⏳ Awaiting MO/Specialist signature before HOD can review.
+      </div>
+      <button class="btn btn-gold" id="hod-sign-button" style="font-size:.9rem;padding:.6rem 1.5rem;display:none;" onclick="openModal('hod-sign-modal')">✍️ HOD — Sign &amp; Lock Form</button>
     </div>
   </div>
 
@@ -2111,8 +2132,8 @@ function openModal(id){
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function openCoordSign(){updateSignCodePreview();openModal('coord-sign-modal');}
 // ── HOD WORD COUNT ──
-document.getElementById('hod-comments').addEventListener('input',function(){const n=this.value.trim().split(/\s+/).filter(Boolean).length;document.getElementById('hod-word-count').textContent=n+' words';});
-document.getElementById('hod-improvement').addEventListener('input',function(){const n=this.value.trim().split(/\s+/).filter(Boolean).length;document.getElementById('hod-improve-word-count').textContent=n+' words';});
+document.getElementById('hod-comments').addEventListener('input', function(){ updateWordCounter('hod-comments','hod-word-count',10,50); });
+document.getElementById('hod-improvement').addEventListener('input', function(){ updateWordCounter('hod-improvement','hod-improve-word-count',50,300); });
 // ── COORD SIGN ──
 function submitCoordSign(){
   const name=document.getElementById('coord-name').value.trim();
@@ -2121,16 +2142,15 @@ function submitCoordSign(){
   const code=getDeathCode();
   const err=document.getElementById('coord-sign-error');
 
-  // --- NEW: CRITICAL FIELD VALIDATION ---
-  const reqIds = ['resp-name', 'state', 'hospital-name', 'ic-number', 'death-date'];
-  for (let id of reqIds) {
-    if (!document.getElementById(id).value.trim()) {
-      err.textContent = '❌ Missing Required Fields: Please complete Respondent Name, State, Hospital, IC, and Death Date before signing.';
-      err.style.display = 'block';
-      return;
-    }
+  // Central field validation — reads data-req="coord" attributes
+  const v = validateStage('coord');
+  if (!v.valid) {
+    const shown = v.errors.slice(0, 4).join(', ');
+    const extra = v.errors.length > 4 ? ` (+${v.errors.length - 4} more)` : '';
+    err.textContent = `❌ Please complete all required fields before signing: ${shown}${extra}.`;
+    err.style.display = 'block';
+    return;
   }
-  // --------------------------------------
 
   if(!name){err.textContent='❌ Please enter coordinator name.';err.style.display='block';return;}
   if(!pwd){err.textContent='❌ Please set a password.';err.style.display='block';return;}
@@ -2209,21 +2229,16 @@ function submitMOSign(){
   const cat=document.getElementById('mo-death-cat').value;
   const err=document.getElementById('mo-sign-error');
 
-  // --- NEW: NARRATIVE & CATEGORY VALIDATION ---
-  if (!document.getElementById('narrative').value.trim()) {
-    err.textContent = '❌ Please write the Narrative Report before signing.';
+  // Central field validation — reads data-req="mo" attributes
+  const v = validateStage('mo');
+  if (!v.valid) {
+    err.textContent = `❌ Please complete all required fields: ${v.errors.join(', ')}.`;
     err.style.display = 'block';
     return;
   }
-  if (!cat) {
-    err.textContent = '❌ Please select a Death Category (1-8).';
-    err.style.display = 'block';
-    return;
-  }
-  // --------------------------------------------
-
-  if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
-  if(!desig){err.textContent='❌ Please enter designation.';err.style.display='block';return;}
+  if(!cat){err.textContent='❌ Please select a Death Category (1–8).';err.style.display='block';return;}
+  if(!name){err.textContent='❌ Please enter your full name.';err.style.display='block';return;}
+  if(!desig){err.textContent='❌ Please enter your designation.';err.style.display='block';return;}
   if(isSigEmpty('mo-canvas')){err.textContent='❌ Please draw your signature.';err.style.display='block';return;}
   err.style.display='none';
   const now=new Date().toLocaleString('en-MY');const sigData=getSigDataURL('mo-canvas');
@@ -2233,6 +2248,9 @@ function submitMOSign(){
   document.getElementById('mo-sig-display').style.display='block';
   document.getElementById('mo-sign-section').style.display='none';
   lockSection('section-clinical');
+  // Reveal HOD sign button now that MO has signed
+  document.getElementById('hod-waiting-notice').style.display='none';
+  document.getElementById('hod-sign-button').style.display='inline-block';
   advanceProgress(2);updateStageDisplay('STAGE 3: Awaiting HOD Signature','The Head of Department must now review and sign.');
   closeModal('mo-sign-modal');markUnsaved();
 }
@@ -2243,6 +2261,14 @@ function submitHODSign(){
   const imp = document.getElementById('hod-improvement').value.trim();
   const cat=document.getElementById('hod-death-cat').value;
   const err=document.getElementById('hod-sign-error');
+
+  // Bypass guard: block HOD sign if MO has not yet signed
+  if (formState.stage < 2) {
+    err.textContent = '❌ The MO/Specialist must sign the form before the HOD can review and sign.';
+    err.style.display = 'block';
+    return;
+  }
+
   if(!name){err.textContent='❌ Please enter name.';err.style.display='block';return;}
   if(!cat){err.textContent='❌ Please select a Death Category (1-8).';err.style.display='block';return;}
   const wc=comments.split(/\s+/).filter(Boolean).length;
@@ -2343,6 +2369,65 @@ function validateNumOrNA(el) {
   if (/^-?\d+(\.\d+)?$/.test(val)) { el.style.borderColor = ''; el.style.boxShadow = ''; return; }
   el.style.borderColor = 'var(--danger-light)';
   el.style.boxShadow = '0 0 0 2px rgba(192,57,43,0.15)';
+}
+
+// ── CENTRAL VALIDATION ENGINE ──
+function markFieldInvalid(el) {
+  el.classList.add('field-error');
+  const clear = () => { el.classList.remove('field-error'); el.removeEventListener('input', clear); el.removeEventListener('change', clear); };
+  el.addEventListener('input', clear);
+  el.addEventListener('change', clear);
+}
+
+function validateStage(stageKey) {
+  const errors = [];
+  let firstEl = null;
+
+  // Validate all tagged inputs, selects, and textareas that are not disabled (locked)
+  document.querySelectorAll(`[data-req="${stageKey}"]:not(:disabled)`).forEach(el => {
+    let fail = false;
+    const val = el.value ? el.value.trim() : '';
+    if (el.tagName === 'TEXTAREA' && el.dataset.minWords) {
+      const wc = val.split(/\s+/).filter(Boolean).length;
+      if (!val || wc < parseInt(el.dataset.minWords)) fail = true;
+    } else {
+      if (!val) fail = true;
+    }
+    if (fail) {
+      markFieldInvalid(el);
+      errors.push(el.dataset.reqLabel || el.id);
+      if (!firstEl) firstEl = el;
+    }
+  });
+
+  // Validate radio groups tagged with data-req-radio
+  document.querySelectorAll(`[data-req-radio="${stageKey}"]`).forEach(container => {
+    const radioName = container.dataset.radioName;
+    const checked = document.querySelector(`input[name="${radioName}"]:checked`);
+    if (!checked) {
+      container.classList.add('req-radio-error');
+      errors.push(container.dataset.reqLabel || radioName);
+      if (!firstEl) firstEl = container;
+      document.querySelectorAll(`input[name="${radioName}"]`).forEach(r => {
+        r.addEventListener('change', () => container.classList.remove('req-radio-error'), { once: true });
+      });
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
+// ── WORD COUNTER UTILITY ──
+function updateWordCounter(textareaId, displayId, min, max) {
+  const ta = document.getElementById(textareaId);
+  const disp = document.getElementById(displayId);
+  if (!ta || !disp) return;
+  const wc = ta.value.trim().split(/\s+/).filter(Boolean).length;
+  let label = `${wc} word${wc !== 1 ? 's' : ''}`;
+  if (min || max) label += ` (${min || 0}${max ? '–' + max : '+'} required)`;
+  disp.textContent = label;
+  const isOk = (!min || wc >= min) && (!max || wc <= max);
+  disp.className = 'hint word-counter ' + (wc === 0 ? 'wc-neutral' : isOk ? 'wc-ok' : 'wc-err');
 }
 
 // ── GCS / TIMI ──
@@ -3030,7 +3115,10 @@ formState.realData = {}; // Clear previous memory
     }
     document.getElementById('mo-sig-display').style.display='block';document.getElementById('mo-sign-section').style.display='none';
     
-    lockSection('section-clinical'); // Upgraded load lock
+    lockSection('section-clinical');
+    // Reveal HOD sign button (MO has already signed in this loaded file)
+    document.getElementById('hod-waiting-notice').style.display='none';
+    document.getElementById('hod-sign-button').style.display='inline-block';
     
     advanceProgress(2);
     updateStageDisplay('STAGE 3: Awaiting HOD Signature','The Head of Department must now review and sign.');
