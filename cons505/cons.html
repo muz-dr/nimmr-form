@@ -21,7 +21,6 @@
     --purple: #8b5cf6;
     --cyan: #06b6d4;
   }
-  
   [data-theme="light"] {
     --bg: #f3f4f6;
     --surface: #ffffff;
@@ -30,7 +29,6 @@
     --text: #111827;
     --text-muted: #6b7280;
   }
-
   body {
     background-color: var(--bg);
     color: var(--text);
@@ -40,7 +38,6 @@
     display: flex;
     flex-direction: column;
   }
-
   .card {
     background-color: var(--surface);
     border: 1px solid var(--border);
@@ -48,7 +45,6 @@
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
-
   .drop-zone {
     border: 2px dashed var(--border);
     border-radius: 12px;
@@ -60,12 +56,11 @@
     border-color: var(--accent-light);
     background-color: rgba(59, 130, 246, 0.1);
   }
-
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
+  
   /* Bar Charts */
   .bar-container {
     display: flex;
@@ -95,13 +90,7 @@
     border-radius: 6px;
     transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .bar-value {
-    width: 40px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
+  
   /* Tables */
   th {
     background-color: var(--surface2);
@@ -121,7 +110,7 @@
     white-space: nowrap;
   }
   tr:last-child td { border-bottom: none; }
-
+  
   /* Toast */
   #toast {
     position: fixed;
@@ -150,7 +139,7 @@
     <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-black text-white shadow-lg text-lg">N</div>
     <div>
       <h1 class="font-bold text-lg leading-tight tracking-wide">NIMMR Consolidator</h1>
-      <p class="text-xs text-[var(--text-muted)] font-medium">Standardized JSON-to-CSV Aggregation Dashboard</p>
+      <p class="text-xs text-[var(--text-muted)] font-medium">Standardized Data Aggregation Dashboard</p>
     </div>
   </div>
   <div class="flex items-center gap-3">
@@ -171,18 +160,19 @@
     <div class="w-16 h-16 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mb-4 text-[var(--accent-light)]">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
     </div>
-    <h2 class="text-lg font-extrabold mb-2">Upload .nimmr Case Files</h2>
+    <h2 class="text-lg font-extrabold mb-2">Upload Data Files (.nimmr or .csv)</h2>
     <p class="text-sm text-[var(--text-muted)] text-center max-w-lg font-medium">
-      Drag & drop multiple completed form files here simultaneously. The engine will extract all data and perfectly map it to the standardized CSV schema.
+      Drag & drop individual <b>.nimmr</b> case files, OR drop a previously compiled <b>.csv</b> Master File here. The engine will seamlessly merge them into a single database.
     </p>
-    <input type="file" id="fileInput" multiple accept=".nimmr,.json" class="hidden">
+    <input type="file" id="fileInput" multiple accept=".nimmr,.json,.csv" class="hidden">
   </div>
 
   <div id="dashboardArea" class="hidden flex-col gap-6">
+    
     <!-- Metrics -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="card flex flex-col justify-center border-l-4 border-l-[var(--accent-light)]">
-        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Total Extracted Cases</span>
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Total Aggregated Cases</span>
         <div class="text-4xl font-black mt-1 text-[var(--text)]" id="metricTotal">0</div>
       </div>
       <div class="card flex flex-col justify-center border-l-4 border-l-[var(--success)]">
@@ -190,7 +180,7 @@
         <div class="text-3xl font-black mt-1" id="metricFinalized">0<span class="text-sm font-medium text-[var(--text-muted)] ml-2" id="metricFinalizedPct">(0%)</span></div>
       </div>
       <div class="card flex flex-col justify-center border-l-4 border-l-[var(--danger)]">
-        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Preventable Deaths</span>
+        <span class="text-xs uppercase font-bold text-[var(--text-muted)] tracking-wider">Cat 1 (Preventable) Deaths</span>
         <div class="text-3xl font-black mt-1 text-[var(--danger)]" id="metricPreventable">0<span class="text-sm font-medium text-[var(--text-muted)] ml-2" id="metricPreventablePct">(0%)</span></div>
       </div>
       <div class="card flex flex-col justify-center border-l-4 border-l-[var(--cyan)]">
@@ -200,7 +190,7 @@
     </div>
 
     <!-- Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="card">
         <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Mortality Cohorts</h3>
         <div id="chartDisease" class="flex flex-col gap-2"></div>
@@ -210,8 +200,12 @@
         <div id="chartStage" class="flex flex-col gap-2"></div>
       </div>
       <div class="card">
+        <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Death Categories</h3>
+        <div id="chartCategory" class="flex flex-col gap-2"></div>
+      </div>
+      <div class="card">
         <h3 class="text-xs font-bold uppercase text-[var(--text-muted)] mb-5 tracking-widest border-b border-[var(--border)] pb-2">Top Contributory Factors by Phase</h3>
-        <div id="chartRCA" class="flex flex-col gap-2"></div>
+        <div id="chartRCA" class="flex flex-col gap-2 h-[220px] overflow-y-auto pr-2"></div>
       </div>
     </div>
 
@@ -230,6 +224,7 @@
         </table>
       </div>
     </div>
+
   </div>
 </main>
 
@@ -243,6 +238,7 @@
 
   // ── STATE ──
   let rawDataFiles = [];
+  let importedCSVRows = [];
   let compiledRows = [];
 
   // Preview Headers for the HTML Table
@@ -259,6 +255,53 @@
     t.textContent = msg;
     t.className = isError ? 'error show' : 'show';
     setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function decodeB64(val) {
+    try { return (typeof val === 'string' && val.startsWith('B64:')) ? decodeURIComponent(escape(atob(val.substring(4)))) : val; } 
+    catch(e) { return val; }
+  }
+
+  // ── CSV PARSER ENGINE ──
+  // Robustly converts raw CSV text (handling commas inside quotes) back into a Javascript Array of Objects
+  function parseCSV(text) {
+    let lines = text.split(/\r?\n/);
+    if(lines.length < 2) return [];
+    
+    // Remove the UTF-8 BOM if it exists to prevent key corruption
+    let headerLine = lines[0].replace(/^\uFEFF/, '');
+    let headers = parseCSVLine(headerLine);
+    let result = [];
+    
+    for(let i = 1; i < lines.length; i++) {
+      if(!lines[i].trim()) continue;
+      let values = parseCSVLine(lines[i]);
+      let obj = {};
+      headers.forEach((h, idx) => {
+        obj[h] = values[idx] || '';
+      });
+      result.push(obj);
+    }
+    return result;
+  }
+
+  function parseCSVLine(text) {
+    let ret = [], val = '', inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+      let c = text[i];
+      if (inQuote) {
+        if (c === '"') {
+          if (i + 1 < text.length && text[i + 1] === '"') { val += '"'; i++; } // Escaped quote
+          else { inQuote = false; }
+        } else { val += c; }
+      } else {
+        if (c === '"') { inQuote = true; }
+        else if (c === ',') { ret.push(val); val = ''; }
+        else { val += c; }
+      }
+    }
+    ret.push(val);
+    return ret;
   }
 
   // ── FILE INGESTION ──
@@ -280,17 +323,19 @@
       return new Promise(resolve => {
         const reader = new FileReader();
         reader.onload = async e => {
-          try { 
+          try {
             let rawText = e.target.result.trim();
-            let jsonString = rawText;
-            
-            // If it doesn't look like JSON, attempt decryption
-            if (!rawText.startsWith('{')) {
-              jsonString = await decryptNIMMR(rawText);
+            // Handle CSV Import
+            if (file.name.toLowerCase().endsWith('.csv')) {
+              resolve({ type: 'csv', data: parseCSV(rawText) });
+            } 
+            // Handle NIMMR/JSON Import
+            else {
+              let jsonString = rawText;
+              if (!rawText.startsWith('{')) jsonString = await decryptNIMMR(rawText);
+              resolve({ type: 'nimmr', data: JSON.parse(jsonString) });
             }
-            
-            resolve(JSON.parse(jsonString)); 
-          } 
+          }
           catch { resolve(null); }
         };
         reader.readAsText(file);
@@ -298,36 +343,43 @@
     });
 
     Promise.all(promises).then(results => {
-      const valid = results.filter(data => data !== null && data.__nimmr);
-      if (valid.length) {
-        rawDataFiles.push(...valid);
+      const validNimmr = results.filter(r => r && r.type === 'nimmr' && r.data.__nimmr).map(r => r.data);
+      const validCSV = results.filter(r => r && r.type === 'csv' && r.data.length > 0).map(r => r.data);
+
+      let added = 0;
+      if (validNimmr.length) { 
+          rawDataFiles.push(...validNimmr); 
+          added += validNimmr.length; 
+      }
+      if (validCSV.length) {
+          validCSV.forEach(rows => importedCSVRows.push(...rows));
+          let rowCount = validCSV.reduce((acc, rows) => acc + rows.length, 0);
+          added += rowCount;
+      }
+
+      if (added > 0) {
         buildDatabase();
         updateDashboard();
-        showToast(`Imported ${valid.length} NIMMR records successfully.`);
+        showToast(`Imported ${added} records successfully.`);
         document.getElementById('exportBtn').disabled = false;
         document.getElementById('dashboardArea').classList.remove('hidden');
         document.getElementById('dashboardArea').classList.add('flex');
       } else {
-        showToast("No valid .nimmr files found.", true);
+        showToast("No valid .nimmr or .csv files found.", true);
       }
     });
   }
 
   function clearData() {
-    rawDataFiles = []; compiledRows = [];
+    rawDataFiles = []; 
+    importedCSVRows = [];
+    compiledRows = [];
+    
     document.getElementById('dashboardArea').classList.remove('flex');
     document.getElementById('dashboardArea').classList.add('hidden');
     document.getElementById('exportBtn').disabled = true;
     fileInput.value = "";
     showToast("Memory cleared.");
-  }
-
-  function decodeB64(val) {
-    try { 
-      return (typeof val === 'string' && val.startsWith('B64:')) ? decodeURIComponent(escape(atob(val.substring(4)))) : val; 
-    } catch(e) { 
-      return val; 
-    }
   }
 
   // ── EXACT SCHEMA MAPPER ──
@@ -336,7 +388,7 @@
     const v = d.vitals || {}; const inv = d.investigations || {}; const pf = d.partF || {};
     const acs = d.acs || {}; const st = d.stroke || {}; const ckd = d.ckd || {}; const pn = d.pneumonia || {};
     const hod = d.hodReview || {}; const com = d.committee || {}; const ass = d.assessorReview || {};
-
+    
     return {
         // META
         'Case Code':d.meta?.caseCode||'','Form Stage':d.meta?.stage||0,'Anonymised':d.meta?.anonymised?'Yes':'No','Saved At':d.meta?.savedAt||'',
@@ -520,9 +572,14 @@
   // ── COMPILATION ──
   function buildDatabase() {
     compiledRows = [];
+    
+    // 1. Process freshly uploaded raw .nimmr JSON files
     rawDataFiles.forEach(raw => {
       compiledRows.push(getStandardizedRow(raw));
     });
+    
+    // 2. Append rows safely parsed directly from previously exported CSVs
+    compiledRows.push(...importedCSVRows);
   }
 
   // ── DASHBOARD UPDATE ──
@@ -530,8 +587,8 @@
     let tAge = 0, vAges = 0, stg6 = 0, preventableCount = 0;
     const dx = { acs: 0, stroke: 0, ckd: 0, pneumo: 0 };
     const stg = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0 };
+    const deathCats = { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0 };
     
-    // Setup categories for Option B RCA Chart
     const rcaCats = { Gen: {}, Pre: {}, Init: {}, Tx: {}, Inp: {}, Other: {} };
 
     // Build Table Preview Headers
@@ -558,22 +615,25 @@
       if (s >= 1 && s <= 6) stg[s]++;
       if (s === 6) stg6++;
 
-      // Preventable Check (Based on Assessor Comments or Category 4/5)
-      let cat = String(row['Assessor Death Category']);
-      if (cat === '4' || cat === '5') preventableCount++;
+      // Category Calculation & Preventable (Category 1) Check
+      let catStr = String(row['Assessor Death Category'] || row['HOD Death Category'] || row['MO Death Category'] || '').trim();
+      let catNum = catStr.charAt(0); // Safely extracts '1' from "1 - Delayed diagnosis..."
+      
+      if (catNum >= '1' && catNum <= '8') deathCats[catNum]++;
+      if (catNum === '1') preventableCount++;
 
-      // Disease Types
-      if (row['Death Type: ACS (A)'] === 1) dx.acs++;
-      if (row['Death Type: Stroke (B)'] === 1) dx.stroke++;
-      if (row['Death Type: CKD (C)'] === 1) dx.ckd++;
-      if (row['Death Type: Pneumonia (D)'] === 1) dx.pneumo++;
+      // Disease Types (Ensuring string/int safety for CSVs)
+      if (parseInt(row['Death Type: ACS (A)']) === 1) dx.acs++;
+      if (parseInt(row['Death Type: Stroke (B)']) === 1) dx.stroke++;
+      if (parseInt(row['Death Type: CKD (C)']) === 1) dx.ckd++;
+      if (parseInt(row['Death Type: Pneumonia (D)']) === 1) dx.pneumo++;
 
-      // RCA Extraction (Hunting for the new "RCA " variables)
+      // RCA Extraction
       Object.keys(row).forEach(k => {
         if (k.startsWith('RCA ') && !k.includes('Specify') && row[k] === 'Yes') {
           let parts = k.split(': ');
           if (parts.length === 2) {
-             let prefix = parts[0].split(' ')[1]; // Extract "Gen", "Pre", "Tx", etc.
+             let prefix = parts[0].split(' ')[1]; 
              let label = parts[1];
              if (prefix === 'Other') label = row['RCA Other: Specify'] || 'Other (Unspecified)';
              if (rcaCats[prefix]) {
@@ -619,7 +679,19 @@
       { label: 'Stg 6 (Finalized)', value: stg[6], color: 'var(--success)' }
     ], total);
 
-    // Render Option B RCA Chart (Top Factor per Category)
+    // NEW: Render Death Categories Chart
+    drawBar('chartCategory', [
+      { label: 'Cat 1 (Delay/Mgmt)', value: deathCats[1], color: 'var(--danger)' },
+      { label: 'Cat 2 (Progression)', value: deathCats[2], color: 'var(--surface2)' },
+      { label: 'Cat 3 (Complication)', value: deathCats[3], color: 'var(--warning)' },
+      { label: 'Cat 4 (High-Risk)', value: deathCats[4], color: 'var(--text-muted)' },
+      { label: 'Cat 5 (Unexpected)', value: deathCats[5], color: 'var(--purple)' },
+      { label: 'Cat 6 (Uncertain)', value: deathCats[6], color: 'var(--border)' },
+      { label: 'Cat 7 (Pre-Admit)', value: deathCats[7], color: 'var(--cyan)' },
+      { label: 'Cat 8 (Expected/Pall)', value: deathCats[8], color: 'var(--success)' }
+    ], stg6 || total); // Scale against finalized forms preferably
+
+    // Render RCA Chart
     const rcaCatNames = {
       Gen: 'General Factors', Pre: 'Pre-Admission', Init: 'Initial Presentation',
       Tx: 'Active Treatment', Inp: 'Inpatient Management', Other: 'Others'
@@ -628,17 +700,14 @@
       Gen: 'var(--text-muted)', Pre: 'var(--accent)', Init: 'var(--warning)',
       Tx: 'var(--danger)', Inp: 'var(--purple)', Other: 'var(--success)'
     };
-
     let rcaHTML = '';
     Object.keys(rcaCats).forEach(prefix => {
-      // Sort to find the highest occurring factor in this category
       let entries = Object.entries(rcaCats[prefix]).sort((a,b)=>b[1]-a[1]);
-      
       if (entries.length > 0) {
         let topItem = entries[0];
         let pct = stg6 > 0 ? Math.round((topItem[1] / stg6) * 100) : 0;
         let barWidth = stg6 > 0 ? (topItem[1] / stg6) * 100 : 0;
-        barWidth = Math.max(barWidth, 2); // Minimum 2% width just so it's visible
+        barWidth = Math.max(barWidth, 2); 
         
         rcaHTML += `
           <div class="mb-3">
@@ -654,8 +723,7 @@
         `;
       }
     });
-
-    if (!rcaHTML) rcaHTML = '<div class="text-sm text-[var(--text-muted)] italic">No contributory factors recorded yet.</div>';
+    if (!rcaHTML) rcaHTML = '<div class="text-sm text-[var(--text-muted)] italic mt-4">No contributory factors recorded yet.</div>';
     document.getElementById('chartRCA').innerHTML = rcaHTML;
   }
 
@@ -679,7 +747,7 @@
   function exportMasterCSV() {
     if (!compiledRows.length) return;
     
-    // Grab headers dynamically from the massive standardized object
+    // Safely pull canonical headers
     const headers = Object.keys(compiledRows[0]);
     let csv = '\uFEFF' + headers.map(k => `"${k.replace(/"/g, '""')}"`).join(",") + "\n";
     
