@@ -263,7 +263,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
 <input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.3 &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.4 &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -861,15 +861,15 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <div class="form-row">
         <div class="form-group w-quarter">
           <label>Eyes (E) /4</label>
-          <input type="number" id="gcs-e" min="0" max="4" value="0" oninput="updateGCS()">
+ <input type="number" id="gcs-e" min="1" max="4" value="1" oninput="updateGCS()">
         </div>
         <div class="form-group w-quarter">
           <label>Verbal (V) /5</label>
-          <input type="number" id="gcs-v" min="0" max="5" value="0" oninput="updateGCS()">
+<input type="number" id="gcs-v" min="1" max="5" value="1" oninput="updateGCS()">
         </div>
         <div class="form-group w-quarter">
           <label>Motor (M) /6</label>
-          <input type="number" id="gcs-m" min="0" max="6" value="0" oninput="updateGCS()">
+<input type="number" id="gcs-m" min="1" max="6" value="1" oninput="updateGCS()">
         </div>
         <div class="form-group w-quarter">
           <label>Modifier</label>
@@ -2430,10 +2430,10 @@ function updateGCS(){
   const eEl=document.getElementById('gcs-e'), vEl=document.getElementById('gcs-v'), mEl=document.getElementById('gcs-m'), tEl=document.getElementById('gcs-t');
   if(!eEl) return;
   if(eEl.closest('.locked-card')) return; // Safety switch
-  let e=parseInt(eEl.value)||0, v=parseInt(vEl.value)||0, m=parseInt(mEl.value)||0;
-  if(e<0){e=0;eEl.value=0;} if(e>4){e=4;eEl.value=4;}
-  if(m<0){m=0;mEl.value=0;} if(m>6){m=6;mEl.value=6;}
-  if(tEl&&tEl.checked){ vEl.disabled=true; vEl.value=0; v=0; } else { vEl.disabled=false; if(v<0){v=0;vEl.value=0;} if(v>5){v=5;vEl.value=5;} }
+let e=parseInt(eEl.value)||1, v=parseInt(vEl.value)||1, m=parseInt(mEl.value)||1;
+  if(e<1){e=1;eEl.value=1;} if(e>4){e=4;eEl.value=4;}
+  if(m<1){m=1;mEl.value=1;} if(m>6){m=6;mEl.value=6;}
+  if(tEl&&tEl.checked){ vEl.disabled=true; vEl.value=0; v=0; } else { vEl.disabled=false; if(v<1){v=1;vEl.value=1;} if(v>5){v=5;vEl.value=5;} }
   document.getElementById('gcs-total').textContent=(e+v+m);
 }
 function calcTIMI(){let s=0;for(let i=1;i<=7;i++){if(document.getElementById('timi-'+i).checked)s++;}document.getElementById('timi-total').textContent=s;}
@@ -3057,6 +3057,12 @@ formState.realData = {}; // Clear previous memory
   sr('culture-result', pn.cultureResult); s('culture-organism-select', pn.cultureOrganism);
   sr('rdt', pn.rdt); sr('flu-test', pn.fluTest); sr('covid-test', pn.covidTest);
   sr('abx-given', pn.abxGiven); sr('abx-1h', pn.abxWithin1h);
+  
+  sc('abx-unasyn',pn.abx_unasyn); sc('abx-augmentin',pn.abx_augmentin); sc('abx-ceftriaxone',pn.abx_ceftriaxone);
+  sc('abx-cefuroxime',pn.abx_cefuroxime); sc('abx-tazo',pn.abx_tazo); sc('abx-ceftazidime',pn.abx_ceftazidime);
+  sc('abx-cefepime',pn.abx_cefepime); sc('abx-azithro',pn.abx_azithro); sc('abx-moxiflox',pn.abx_moxiflox);
+  sc('abx-meropenem',pn.abx_meropenem); sc('abx-imipenem',pn.abx_imipenem); sc('abx-ertapenem',pn.abx_ertapenem);
+  s('abx-other-text',pn.abx_otherText);
   
   // NEW Assessor RCA Table Checkboxes
   const ass = data.assessorReview || {};
