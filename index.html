@@ -263,7 +263,7 @@ canvas.sig-pad{display:block;width:100%;cursor:crosshair;touch-action:none;}
       <button class="btn" style="padding:.75rem;font-size:.9rem;" onclick="document.getElementById('file-load-startup').click()">📂 Load Existing Form (.nimmr)</button>
 <input type="file" id="file-load-startup" accept=".nimmr,.json,text/plain,application/json,*/*" style="display:none" onchange="loadFormFile(event)">
     </div>
-    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.4 &nbsp;|&nbsp; Updated 24/6/2026</p>
+    <p style="font-size:.68rem;color:var(--text-dim);margin-top:1rem;text-align:center;">NIMMR Version 1.5 &nbsp;|&nbsp; Updated 24/6/2026</p>
   </div>
 </div>
 
@@ -2841,7 +2841,6 @@ function loadFormFile(event){
       closeModal('load-modal');
       document.getElementById('startup-modal').classList.remove('open');
       document.getElementById('main-content').style.display='block';
-      filterHospitals();
       updateGCS();
       updateDateTime();
       setInterval(updateDateTime,1000);
@@ -2946,7 +2945,14 @@ formState.realData = {}; // Clear previous memory
            if(el.tagName === 'SELECT' && !Array.from(el.options).some(o => o.value === '[ANONYMISED]')) el.add(new Option('[ANONYMISED]', '[ANONYMISED]'));
            s(id, '[ANONYMISED]');
         }
-     } else { s(id, val); }
+     } else { 
+        // SAFETY NET: Force the dropdown option to exist before selecting it
+        const el = document.getElementById(id);
+        if (el && el.tagName === 'SELECT' && val && !Array.from(el.options).some(o => o.value === val)) {
+           el.add(new Option(val, val));
+        }
+        s(id, val); 
+     }
   };
   
   const resp=data.respondent||{};const bi=data.basicInfo||{};const a=data.partA||{};const cm=data.comorbidities||{};const rf=data.riskFactors||{};
